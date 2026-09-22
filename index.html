@@ -255,13 +255,13 @@ function render(){
   window.scrollTo(0,0);
 }
 
-function top(){
+function topBar(){
   return `<div class="top"><a class="brand" href="#/"><svg viewBox="0 0 24 24"><use href="#i-seed"/></svg>Kado Abadi</a><span class="via">oleh Kitabisa</span></div>`;
 }
 
 /* ---------- landing ---------- */
 function renderLanding(){
-  app.innerHTML = top() + `
+  app.innerHTML = topBar() + `
   <section class="hero">
     <h1>Hadiah yang terus memberi, atas nama orang yang kamu sayangi.</h1>
     <p>Tanam kebaikan untuk seseorang. Uangnya tidak pernah habis; hasilnya menanam pohon, memberi makan, atau membiayai sekolah setiap tahun, selamanya.</p>
@@ -321,7 +321,7 @@ function calcCard(A, causeKey, N){
 function renderCreate(){
   const o = OCCASIONS[draft.occasion];
   if (!CAUSES[draft.cause].region.includes(draft.region)) draft.region = CAUSES[draft.cause].region[0];
-  app.innerHTML = top() + `
+  app.innerHTML = topBar() + `
   <h2>${o.kicker}</h2>
   <p class="muted">Satu hadiah. Terus memberi, setiap tahun.</p>
 
@@ -464,7 +464,7 @@ function renderGift(g){
   const yearsLive = Math.max(1, Math.floor((Date.now() - new Date(g.createdAt)) / 31557600000) + 1);
   const proj = projectedStamps(g, g.stamps.length ? yearsLive : 1);
   const waText = `Hai, ${g.giver.name} baru menanam kebaikan untuk ${g.recipient.name}. Setiap tahun, ${Math.max(1,Math.floor(g.amount*NET_YIELD/c.cost))} ${c.unit} ${c.verb} atas nama ${g.recipient.name}, selamanya. Lihat sertifikatnya:`;
-  app.innerHTML = top() + `
+  app.innerHTML = topBar() + `
   <div class="gifthead">
     <div class="kick">${o.kicker}</div>
     <h1>${esc(g.recipient.name)}</h1>
@@ -520,7 +520,7 @@ function renderPoster(g){
   const url = location.origin + location.pathname + "#/gift/" + g.id;
   const c = CAUSES[g.cause];
   const share = `${g.giver.name} menanam kebaikan untuk ${g.recipient.name}: ${Math.max(1,Math.floor(g.amount*NET_YIELD/c.cost))} ${c.unit} setiap tahun, selamanya. ${url}`;
-  app.innerHTML = top() + `
+  app.innerHTML = topBar() + `
   <h2>Sertifikat Kebaikan</h2>
   <p class="muted small">1080 × 1350, siap dibagikan ke WhatsApp dan Instagram.</p>
   ${posterHTML(g, true)}

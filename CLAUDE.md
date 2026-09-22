@@ -20,6 +20,15 @@ Read `docs/SPEC.md` before changing anything. These rules are the parts of the s
 - No generative image models on photos of minors.
 - Unit costs in `calc.js` are placeholders until a partner quote replaces them; when you change one, change the comment beside it to name the source.
 
+## Campaign pages
+- A campaign (`KP-…`) is owned by the recipient (couple, parents). Gifts attach via `campaignId`; the campaign never holds money itself, only the sum of its gifts' units.
+- The campaign's cause and region are locked for every gift planted into it. Givers choose only amount and message.
+- Collective numbers on a campaign page are computed from its gifts, never stored.
+
+## Language
+- Every user-facing string lives in the `L` dictionary in `index.html` (keys `id` and `en`). Never inline copy in templates.
+- Never name a top-level function after a `window` property (`top`, `name`, `status`, `open`, `parent`, …). It silently kills everything declared after it in browsers. The jsdom render check catches this; run it before committing.
+
 ## Engineering
 - v1 is static and hash-routed; keep it deployable to GitHub Pages until the Next.js migration lands.
 - Run `node --test` before committing. The tests pin the spec's worked example (Rp 1jt → 2 / 24 / 40 / 240 trees at years 1 / 10 / 17 / 100).

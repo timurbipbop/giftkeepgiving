@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kado Abadi — hadiah yang terus memberi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="./calc.js"></script>
+<style>
+:root{
+  --paper:#F2F4EC; --ink:#17301F; --moss:#2F5C3F; --leaf:#7FA86C; --marigold:#DFA92D; --soil:#8A5A3A; --mist:#DCE3D6; --white:#FFFFFF;
+  --bg:var(--paper); --fg:var(--ink); --muted:#5B6B5E; --line:#CBD4C6; --card:var(--white); --accent:var(--moss); --accent-fg:#FFFFFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --bg:#0F1F16; --fg:#EEF2E8; --muted:#A5B3A7; --line:#2C4334; --card:#17301F; --accent:#7FA86C; --accent-fg:#0F1F16; --mist:#1E3325; }
+}
+:root[data-theme="dark"]{ --bg:#0F1F16; --fg:#EEF2E8; --muted:#A5B3A7; --line:#2C4334; --card:#17301F; --accent:#7FA86C; --accent-fg:#0F1F16; --mist:#1E3325; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+body{ margin:0; background:var(--bg); color:var(--fg); font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+h1,h2,h3,.serif{ font-family:"Fraunces","Iowan Old Style",Georgia,serif; font-weight:400; letter-spacing:-0.01em; line-height:1.15; margin:0; }
+h1{ font-size:clamp(34px,7vw,44px); font-variation-settings:"opsz" 144, "SOFT" 60; }
+h2{ font-size:26px; }
+h3{ font-size:20px; }
+p{ margin:0 0 12px; }
+a{ color:inherit; }
+button,input,select,textarea{ font:inherit; color:inherit; }
+img{ max-width:100%; }
+
+.app{ max-width:460px; margin:0 auto; min-height:100%; padding:0 18px 48px; }
+.top{ display:flex; align-items:center; justify-content:space-between; padding:16px 0 8px; }
+.brand{ text-decoration:none; display:flex; align-items:center; gap:8px; font-family:"Fraunces",serif; font-size:20px; }
+.brand svg{ width:22px; height:22px; }
+.top .via{ font-size:12px; color:var(--muted); }
+
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:999px; padding:14px 22px; background:var(--accent); color:var(--accent-fg); font-weight:600; cursor:pointer; text-decoration:none; }
+.btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{ outline:3px solid var(--marigold); outline-offset:2px; }
+.btn.quiet{ background:transparent; color:var(--fg); border:1.5px solid var(--line); }
+.btn.wide{ width:100%; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+.muted{ color:var(--muted); }
+.small{ font-size:13px; }
+.tiny{ font-size:11.5px; color:var(--muted); }
+.gap{ height:20px; }
+
+/* Landing */
+.hero{ padding:28px 0 8px; }
+.hero h1{ margin-bottom:14px; }
+.hero p{ font-size:17px; max-width:36ch; }
+.occasions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:22px 0 10px; }
+.occ{ text-align:left; border:1.5px solid var(--line); background:var(--card); border-radius:16px; padding:16px 14px 14px; cursor:pointer; display:flex; flex-direction:column; gap:10px; }
+.occ svg{ width:28px; height:28px; }
+.occ b{ font-family:"Fraunces",serif; font-weight:400; font-size:19px; }
+.occ span{ font-size:12.5px; color:var(--muted); }
+.how{ margin:26px 0 0; border-top:1px solid var(--line); padding-top:18px; }
+.how ol{ padding-left:18px; margin:8px 0 0; }
+.how li{ margin-bottom:6px; }
+
+/* Form */
+.field{ margin:18px 0; }
+.field label{ display:block; font-weight:600; margin-bottom:8px; }
+.field .hint{ font-size:12.5px; color:var(--muted); margin-top:6px; }
+.input{ width:100%; border:1.5px solid var(--line); background:var(--card); border-radius:12px; padding:13px 14px; }
+textarea.input{ min-height:84px; resize:vertical; }
+.pills{ display:flex; flex-wrap:wrap; gap:8px; }
+.pill{ border:1.5px solid var(--line); background:var(--card); border-radius:999px; padding:9px 14px; cursor:pointer; }
+.pill[aria-pressed="true"]{ background:var(--fg); color:var(--bg); border-color:var(--fg); }
+.photo{ display:flex; align-items:center; gap:14px; }
+.avatar{ width:64px; height:64px; border-radius:50%; background:var(--marigold); color:var(--ink); display:grid; place-items:center; font-family:"Fraunces",serif; font-size:26px; overflow:hidden; flex:none; }
+.avatar img{ width:100%; height:100%; object-fit:cover; }
+input[type=range]{ width:100%; accent-color:var(--moss); }
+.amount{ display:flex; justify-content:space-between; align-items:baseline; }
+.amount b{ font-family:"Fraunces",serif; font-weight:400; font-size:30px; }
+
+/* Calculator */
+.calc{ background:var(--card); border:1.5px solid var(--line); border-radius:20px; padding:18px 16px 16px; margin-top:10px; }
+.calc .lead{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.calc .lead b{ font-family:"Fraunces",serif; font-weight:400; font-size:34px; line-height:1; }
+.calc .lead span{ text-align:right; }
+.grove{ display:grid; grid-template-columns:repeat(auto-fill,minmax(22px,1fr)); gap:4px; margin:14px 0 6px; min-height:56px; }
+.grove svg{ width:100%; aspect-ratio:1; display:block; }
+.grove .on{ color:var(--moss); }
+.grove .ghost{ color:var(--line); }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .grove .on{ color:var(--leaf); } }
+.legend{ display:flex; gap:14px; font-size:12.5px; color:var(--muted); flex-wrap:wrap; }
+.legend i{ display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:-1px; margin-right:5px; }
+.years{ margin-top:14px; }
+.years .row{ display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:4px; }
+.cross{ margin-top:12px; padding:10px 12px; border-radius:12px; background:var(--mist); font-size:13.5px; }
+.cross.hit{ background:var(--marigold); color:var(--ink); }
+.compare{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px; }
+.compare div{ border-top:2px solid var(--line); padding-top:8px; }
+.compare b{ display:block; font-family:"Fraunces",serif; font-weight:400; font-size:20px; }
+.compare span{ font-size:12px; color:var(--muted); }
+
+/* Poster */
+.poster{ position:relative; aspect-ratio:1080/1350; width:100%; border-radius:18px; overflow:hidden; background:#1C3A28; color:#F2F4EC; font-family:"Plus Jakarta Sans",sans-serif; container-type:inline-size; }
+.poster .bg{ position:absolute; inset:0; }
+.poster .frame{ position:absolute; inset:5%; border:1px solid rgba(242,244,236,.35); border-radius:8px; }
+.poster .content{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; text-align:center; padding:10% 9% 8%; }
+.poster .kicker{ font-size:3.4cqw; letter-spacing:.02em; opacity:.85; }
+.poster .name{ font-family:"Fraunces",serif; font-size:12cqw; line-height:1; margin:2% 0 0; font-variation-settings:"opsz" 144; }
+.poster .arch{ width:46%; aspect-ratio:1/1.18; border-radius:50% 50% 8% 8% / 42% 42% 8% 8%; overflow:hidden; margin:6% 0 5%; background:#DFA92D; display:grid; place-items:center; font-family:"Fraunces",serif; font-size:16cqw; color:#17301F; }
+.poster .arch img{ width:100%; height:100%; object-fit:cover; }
+.poster .line{ font-family:"Fraunces",serif; font-style:italic; font-size:5.2cqw; line-height:1.3; max-width:80%; }
+.poster .from{ margin-top:auto; font-size:3.6cqw; opacity:.9; }
+.poster .footer{ position:absolute; left:9%; right:9%; bottom:7%; display:flex; align-items:flex-end; justify-content:space-between; }
+.poster .seal{ width:20%; aspect-ratio:1; border-radius:50%; background:#DFA92D; color:#17301F; display:grid; place-items:center; text-align:center; font-size:2.4cqw; line-height:1.15; font-weight:700; transform:rotate(-8deg); box-shadow:0 0 0 .8cqw #1C3A28, 0 0 0 1cqw #DFA92D; }
+.poster .seal small{ display:block; font-weight:500; font-size:2cqw; }
+.poster .qr{ background:#F2F4EC; padding:1.4cqw; border-radius:1.6cqw; width:19%; aspect-ratio:1; display:grid; place-items:center; }
+.poster .qr img,.poster .qr canvas{ width:100% !important; height:100% !important; display:block; }
+.poster .fid{ position:absolute; left:0; right:0; bottom:3%; text-align:center; font-size:2.4cqw; opacity:.7; letter-spacing:.06em; }
+
+/* Gift page */
+.gifthead{ padding:12px 0 6px; }
+.gifthead .kick{ color:var(--muted); font-size:14px; }
+.stat{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
+.stat div{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:14px; }
+.stat b{ display:block; font-family:"Fraunces",serif; font-weight:400; font-size:26px; line-height:1.1; }
+.stat span{ font-size:12.5px; color:var(--muted); }
+.strip{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin:6px 0 18px; border:1.5px solid var(--line); border-radius:16px; overflow:hidden; background:var(--card); }
+.strip div{ padding:14px 12px; border-right:1.5px solid var(--line); }
+.strip div:last-child{ border-right:0; }
+.strip b{ display:block; font-family:"Fraunces",serif; font-weight:400; font-size:24px; line-height:1.1; }
+.strip span{ font-size:12px; color:var(--muted); }
+.timeline{ margin:8px 0 0; padding:0; list-style:none; border-left:2px solid var(--line); }
+.timeline li{ position:relative; padding:0 0 18px 18px; }
+.timeline li::before{ content:""; position:absolute; left:-7px; top:6px; width:12px; height:12px; border-radius:50%; background:var(--moss); border:2px solid var(--bg); }
+.timeline li.proj::before{ background:var(--bg); border:2px solid var(--line); }
+.timeline .when{ font-size:12.5px; color:var(--muted); }
+.timeline .what{ font-family:"Fraunces",serif; font-size:19px; margin:2px 0 6px; }
+.stamp{ font-size:11.5px; color:var(--muted); line-height:1.55; }
+.stamp a{ color:var(--muted); }
+.stamp .share{ color:var(--fg); }
+.wa{ background:#E7FFDB; color:#111; border-radius:14px 14px 14px 4px; padding:12px 14px; font-size:14px; line-height:1.45; margin:10px 0 4px; box-shadow:0 1px 0 rgba(0,0,0,.08); }
+.wa .who{ font-size:12px; color:#1F7A4F; font-weight:600; margin-bottom:2px; }
+.wa .time{ text-align:right; font-size:10.5px; color:#667; margin-top:4px; }
+.section{ margin-top:26px; }
+.section h3{ margin-bottom:8px; }
+
+/* Modal */
+.modal{ position:fixed; inset:0; background:rgba(15,31,22,.55); display:none; align-items:flex-end; justify-content:center; z-index:9; }
+.modal.open{ display:flex; }
+.sheet{ background:var(--card); color:var(--fg); width:100%; max-width:460px; border-radius:22px 22px 0 0; padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px)); }
+.pay{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); }
+.pay:last-of-type{ border-bottom:0; }
+
+.toast{ position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--fg); color:var(--bg); padding:10px 16px; border-radius:999px; font-size:14px; display:none; z-index:10; }
+.toast.show{ display:block; }
+.hidden{ display:none !important; }
+@media (prefers-reduced-motion:no-preference){ .grove svg{ transition:color .25s; } }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-tree" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 5 12h3l-3 5h6v5h2v-5h6l-3-5h3z"/></symbol>
+  <symbol id="i-meal" viewBox="0 0 24 24"><path fill="currentColor" d="M3 11h18a9 9 0 0 1-18 0zm1-3h16v2H4z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h9a3 3 0 0 1 3 3v15H7a3 3 0 0 0-3 3zm14 3v15h2V6z"/></symbol>
+  <symbol id="i-seed" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c-1-6 2-10 8-11-1 6-4 9-8 11zm0 0C11 16 8 12 2 11c1 6 5 9 10 11zM12 2v10h-1V2z"/></symbol>
+</svg>
+
+<script>
+/* ---------- config + calculator live in calc.js ---------- */
+const { NET_YIELD, UNIT_PRICE, MIN_GIFT, MAX_GIFT, STEP, CAUSES, OCCASIONS } = KadoCalc;
+const calc = KadoCalc;
+for (const k in OCCASIONS) OCCASIONS[k].svg = "i-seed";
+const rp = n => "Rp " + Math.round(n).toLocaleString("id-ID");
+const fmtDate = d => new Date(d).toLocaleDateString("id-ID",{ day:"numeric", month:"long", year:"numeric" });
+
+/* ---------- state ---------- */
+const DEMO = {
+  id:"KA-2025-000148", occasion:"lahir", cause:"pohon", region:"Banten", amount:1000000,
+  recipient:{ name:"Thomas", wa:"" }, giver:{ name:"Timmy" },
+  message:"Semoga tumbuh tinggi seperti pohon-pohon ini, Thomas.",
+  createdAt:"2025-01-20",
+  stamps:[
+    { date:"2025-03-12", units:2, total:4000, partner:"Yayasan Hijau Lestari", location:"Pandeglang, Banten", amount:100000000, proofs:3 },
+    { date:"2026-02-08", units:3, total:5200, partner:"Yayasan Hijau Lestari", location:"Lebak, Banten", amount:130000000, proofs:4 },
+  ],
+};
+let gifts = { [DEMO.id]: DEMO };
+const photos = {}; // dataURLs kept in memory only
+try { const s = localStorage.getItem("ka.gifts"); if (s) gifts = Object.assign(gifts, JSON.parse(s)); } catch(e){}
+function persist(){ try { const copy = {}; for (const k in gifts) if (k !== DEMO.id) copy[k] = gifts[k]; localStorage.setItem("ka.gifts", JSON.stringify(copy)); } catch(e){} }
+
+const draft = { occasion:"lahir", cause:"pohon", region:"Jawa Barat", amount:1000000, years:10, recipient:"", wa:"", giver:"", message:"" };
+
+/* ---------- router ---------- */
+const app = document.getElementById("app");
+window.addEventListener("hashchange", render);
+function route(){ const h = location.hash.replace(/^#\/?/,""); const [p, id] = h.split("/"); return { p: p || "", id }; }
+function go(h){ location.hash = h; }
+
+function render(){
+  const { p, id } = route();
+  if (p === "create") return renderCreate();
+  if (p === "gift" && gifts[id]) return renderGift(gifts[id]);
+  if (p === "poster" && gifts[id]) return renderPoster(gifts[id]);
+  renderLanding();
+  window.scrollTo(0,0);
+}
+
+function top(){
+  return `<div class="top"><a class="brand" href="#/"><svg viewBox="0 0 24 24"><use href="#i-seed"/></svg>Kado Abadi</a><span class="via">oleh Kitabisa</span></div>`;
+}
+
+/* ---------- landing ---------- */
+function renderLanding(){
+  app.innerHTML = top() + `
+  <section class="hero">
+    <h1>Hadiah yang terus memberi, atas nama orang yang kamu sayangi.</h1>
+    <p>Tanam kebaikan untuk seseorang. Uangnya tidak pernah habis; hasilnya menanam pohon, memberi makan, atau membiayai sekolah setiap tahun, selamanya.</p>
+  </section>
+  <div class="occasions">
+    ${Object.entries(OCCASIONS).map(([k,o]) => `
+      <button class="occ" data-occ="${k}"><svg viewBox="0 0 24 24"><use href="#${o.svg}"/></svg><b>${o.label}</b><span>${o.sub}</span></button>`).join("")}
+  </div>
+  <p class="small muted">Contoh: <a href="#/gift/${DEMO.id}">lihat hadiah Timmy untuk Thomas</a></p>
+  <section class="how">
+    <h3>Cara kerjanya</h3>
+    <ol>
+      <li>Pilih orangnya, tujuannya, dan jumlahnya.</li>
+      <li>Uangmu masuk ke dana wakaf abadi yang dikelola nazhir berizin Kitabisa. Pokoknya tidak pernah dipakai.</li>
+      <li>Setiap tahun, hasilnya ditanam atas nama mereka. Mereka menerima sertifikat via WhatsApp dan halaman yang terus bertumbuh.</li>
+    </ol>
+  </section>`;
+  app.querySelectorAll("[data-occ]").forEach(b => b.onclick = () => { draft.occasion = b.dataset.occ; go("/create"); });
+  window.scrollTo(0,0);
+}
+
+/* ---------- grove visual ---------- */
+function grove(eternal, oneTime, icon){
+  const cap = 150; const n = Math.min(Math.max(eternal, oneTime), cap);
+  let out = "";
+  for (let i=0;i<n;i++){ const cls = i < eternal ? "on" : "ghost"; out += `<svg class="${cls}" viewBox="0 0 24 24"><use href="#${icon}"/></svg>`; }
+  const extra = Math.max(eternal, oneTime) - cap;
+  return `<div class="grove">${out}</div>` + (extra > 0 ? `<p class="tiny">+${extra.toLocaleString("id-ID")} lagi</p>` : "");
+}
+
+function calcCard(A, causeKey, N){
+  const c = CAUSES[causeKey]; const eternal = calc.units(A, c.cost, N); const once = calc.oneTime(A, c.cost);
+  const cross = calc.crossover(); const perYear = A * NET_YIELD / c.cost;
+  const hit = N >= cross;
+  return `
+  <div class="calc">
+    <div class="lead"><b>${eternal.toLocaleString("id-ID")}</b><span><div>${c.unit} ${c.verb}</div><div class="small muted">dalam ${N} tahun, atas nama mereka</div></span></div>
+    ${grove(eternal, once, c.icon)}
+    <div class="legend"><span><i style="background:var(--moss)"></i>Kado Abadi sampai tahun ${N}</span><span><i style="background:var(--line)"></i>hadiah biasa, habis di tahun pertama</span></div>
+    <div class="years">
+      <input type="range" id="years" min="1" max="100" value="${N}" aria-label="Horizon tahun">
+      <div class="row"><span>1 tahun</span><span>tahun ke-${N}</span><span>100 tahun</span></div>
+    </div>
+    <div class="cross ${hit ? "hit" : ""}">${hit
+      ? `Sejak tahun ke-${cross}, hadiah ini memberi lebih dari hadiah biasa. Dan pokoknya masih utuh.`
+      : `Hadiah biasa berhenti di ${once} ${c.unit}. Kado Abadi melampauinya di tahun ke-${cross}, lalu terus tumbuh.`}</div>
+    <div class="compare">
+      <div><b>${once}</b><span>hadiah biasa, sekali saja</span></div>
+      <div><b>${eternal}</b><span>Kado Abadi, ${N} tahun</span></div>
+      <div><b>${rp(A)}</b><span>masih tertanam</span></div>
+    </div>
+    <p class="tiny" style="margin-top:10px">Proyeksi. ${rp(A*NET_YIELD)} per tahun dari imbal hasil bersih ${Math.round(NET_YIELD*100)}%, ~${perYear.toFixed(1)} ${c.unit}/tahun. Angka aktual menggantikan proyeksi saat penyaluran terjadi.</p>
+  </div>`;
+}
+
+/* ---------- create ---------- */
+function renderCreate(){
+  const o = OCCASIONS[draft.occasion];
+  if (!CAUSES[draft.cause].region.includes(draft.region)) draft.region = CAUSES[draft.cause].region[0];
+  app.innerHTML = top() + `
+  <h2>${o.kicker}</h2>
+  <p class="muted">Satu hadiah. Terus memberi, setiap tahun.</p>
+
+  <div class="field"><label>Untuk siapa</label>
+    <div class="pills" id="occ">${Object.entries(OCCASIONS).map(([k,v]) => `<button class="pill" data-k="${k}" aria-pressed="${k===draft.occasion}">${v.label}</button>`).join("")}</div>
+  </div>
+
+  <div class="field"><label for="rname">Nama penerima</label>
+    <input class="input" id="rname" placeholder="Thomas" value="${esc(draft.recipient)}">
+    <div class="photo" style="margin-top:12px">
+      <div class="avatar" id="avatar">${photos.draft ? `<img src="${photos.draft}" alt="">` : (draft.recipient ? draft.recipient[0].toUpperCase() : "?")}</div>
+      <div><label class="btn quiet" style="padding:10px 16px"><input type="file" id="photo" accept="image/*" class="hidden">Pilih foto</label>
+      <div class="hint">Foto dipakai di sertifikat. Pastikan kamu punya izin dari keluarganya.</div></div>
+    </div>
+  </div>
+
+  <div class="field"><label for="wa">WhatsApp penerima</label>
+    <input class="input" id="wa" inputmode="tel" placeholder="+62 812 ..." value="${esc(draft.wa)}">
+    <div class="hint">Sertifikat dikirim dari nomor resmi Kitabisa, tanpa ajakan apa pun.</div>
+  </div>
+
+  <div class="field"><label>Tanam untuk apa</label>
+    <div class="pills" id="cause">${Object.entries(CAUSES).map(([k,v]) => `<button class="pill" data-k="${k}" aria-pressed="${k===draft.cause}">${v.label}</button>`).join("")}</div>
+  </div>
+
+  <div class="field"><label for="region">Di mana</label>
+    <select class="input" id="region">${CAUSES[draft.cause].region.map(r => `<option ${r===draft.region?"selected":""}>${r}</option>`).join("")}</select>
+  </div>
+
+  <div class="field"><label>Berapa</label>
+    <div class="amount"><b id="amt">${rp(draft.amount)}</b><span class="small muted">${(draft.amount/UNIT_PRICE).toLocaleString("id-ID")} unit wakaf</span></div>
+    <input type="range" id="amount" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}" aria-label="Jumlah hadiah">
+    <div id="calcwrap">${calcCard(draft.amount, draft.cause, draft.years)}</div>
+  </div>
+
+  <div class="field"><label for="gname">Dari</label>
+    <input class="input" id="gname" placeholder="Nama kamu" value="${esc(draft.giver)}">
+  </div>
+  <div class="field"><label for="msg">Pesan untuk mereka</label>
+    <textarea class="input" id="msg" placeholder="Semoga tumbuh tinggi seperti pohon-pohon ini.">${esc(draft.message)}</textarea>
+  </div>
+
+  <button class="btn wide" id="submit">Tanam sekarang</button>
+  <p class="tiny" style="text-align:center;margin-top:10px">Pokok hadiah menjadi wakaf uang abadi. Biaya nazhir maksimal 10% dari surplus, sesuai UU 41/2004.</p>`;
+
+  bindPills("#occ", k => { draft.occasion = k; renderCreate(); });
+  bindPills("#cause", k => { draft.cause = k; renderCreate(); });
+  const rname = q("#rname"); rname.oninput = () => { draft.recipient = rname.value; if (!photos.draft) q("#avatar").textContent = rname.value ? rname.value[0].toUpperCase() : "?"; };
+  q("#wa").oninput = e => draft.wa = e.target.value;
+  q("#gname").oninput = e => draft.giver = e.target.value;
+  q("#msg").oninput = e => draft.message = e.target.value;
+  q("#region").onchange = e => draft.region = e.target.value;
+  q("#photo").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { photos.draft = r.result; q("#avatar").innerHTML = `<img src="${r.result}" alt="">`; }; r.readAsDataURL(f); };
+  q("#amount").oninput = e => { draft.amount = +e.target.value; q("#amt").textContent = rp(draft.amount); refreshCalc(); };
+  bindYears();
+  q("#submit").onclick = openPay;
+  window.scrollTo(0,0);
+}
+function refreshCalc(){ q("#calcwrap").innerHTML = calcCard(draft.amount, draft.cause, draft.years); bindYears(); }
+function bindYears(){ const y = q("#years"); if (y) y.oninput = e => { draft.years = +e.target.value; refreshCalc(); }; }
+function bindPills(sel, fn){ document.querySelectorAll(sel + " .pill").forEach(b => b.onclick = () => fn(b.dataset.k)); }
+function q(s){ return document.querySelector(s); }
+function esc(s){ return String(s||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+
+/* ---------- payment (stub) ---------- */
+function openPay(){
+  if (!draft.recipient.trim()) { toast("Isi nama penerima dulu."); q("#rname").focus(); return; }
+  if (!draft.giver.trim()) { toast("Isi nama kamu di bagian Dari."); q("#gname").focus(); return; }
+  const c = CAUSES[draft.cause];
+  const m = document.getElementById("modal");
+  m.innerHTML = `<div class="sheet">
+    <h3>Konfirmasi hadiah</h3>
+    <div class="pay"><span>Untuk</span><b>${esc(draft.recipient)}</b></div>
+    <div class="pay"><span>Tanam</span><b>${c.label}, ${esc(draft.region)}</b></div>
+    <div class="pay"><span>Pokok wakaf abadi</span><b>${rp(draft.amount)}</b></div>
+    <div class="pay"><span>Setiap tahun, selamanya</span><b>~${(draft.amount*NET_YIELD/c.cost).toFixed(1)} ${c.unit}</b></div>
+    <div class="gap"></div>
+    <button class="btn wide" id="pay">Bayar ${rp(draft.amount)}</button>
+    <div class="gap" style="height:10px"></div>
+    <button class="btn quiet wide" id="cancel">Kembali</button>
+    <p class="tiny" style="margin-top:12px;text-align:center">Prototipe: pembayaran disimulasikan.</p>
+  </div>`;
+  m.classList.add("open");
+  q("#cancel").onclick = () => m.classList.remove("open");
+  q("#pay").onclick = () => {
+    const id = "KA-" + new Date().getFullYear() + "-" + String(Math.floor(Math.random()*900000)+100000);
+    gifts[id] = { id, occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{ name:draft.recipient.trim(), wa:draft.wa }, giver:{ name:draft.giver.trim() }, message:draft.message.trim(), createdAt:new Date().toISOString().slice(0,10), stamps:[] };
+    if (photos.draft) { photos[id] = photos.draft; delete photos.draft; }
+    persist(); m.classList.remove("open"); toast("Tertanam. Sertifikat dibuat."); go("/gift/" + id);
+  };
+}
+
+/* ---------- poster ---------- */
+function posterHTML(g, big){
+  const o = OCCASIONS[g.occasion], c = CAUSES[g.cause];
+  const perYear = g.amount * NET_YIELD / c.cost;
+  const yearly = perYear >= 1 ? `${Math.floor(perYear)} ${c.unit} setiap tahun` : `${Math.max(1,Math.round(perYear*10))} ${c.unit} setiap 10 tahun`;
+  const photo = photos[g.id];
+  return `<div class="poster" id="poster-${g.id}">
+    <svg class="bg" viewBox="0 0 1080 1350" preserveAspectRatio="none" aria-hidden="true">
+      <rect width="1080" height="1350" fill="#1C3A28"/>
+      <g fill="none" stroke="#2F5C3F" stroke-width="2" opacity=".55">
+        ${[...Array(9)].map((_,i)=>`<path d="M${-100+i*160} 1350 C ${i*160} 900, ${140+i*160} 700, ${60+i*160} 300"/>`).join("")}
+      </g>
+    </svg>
+    <div class="frame"></div>
+    <div class="content">
+      <div class="kicker">${o.kicker}</div>
+      <div class="name">${esc(g.recipient.name)}</div>
+      <div class="arch">${photo ? `<img src="${photo}" alt="">` : esc(g.recipient.name[0].toUpperCase())}</div>
+      <div class="line">${yearly}, ${esc(g.region)}, atas nama ${esc(g.recipient.name)}. Selamanya.</div>
+      <div class="from">Ditanam oleh ${esc(g.giver.name)}, ${fmtDate(g.createdAt)}</div>
+    </div>
+    <div class="footer">
+      <div class="seal">Kado Abadi<small>wakaf abadi · Kitabisa</small></div>
+      <div class="qr" id="qr-${g.id}"></div>
+    </div>
+    <div class="fid">giftkeepgiving.com &nbsp;·&nbsp; ${g.id}</div>
+  </div>`;
+}
+function drawQR(g){
+  const el = document.getElementById("qr-" + g.id); if (!el || !window.QRCode) return;
+  const url = location.origin + location.pathname + "#/gift/" + g.id;
+  el.innerHTML = ""; try { new QRCode(el, { text:url, width:256, height:256, colorDark:"#17301F", colorLight:"#F2F4EC", correctLevel:QRCode.CorrectLevel.M }); } catch(e){}
+}
+
+/* ---------- gift page ---------- */
+function projectedStamps(g, fromYear){
+  const c = CAUSES[g.cause]; const per = g.amount * NET_YIELD / c.cost; const out = [];
+  const start = new Date(g.createdAt);
+  for (let y = fromYear; y < fromYear + 3; y++){
+    const d = new Date(start); d.setFullYear(start.getFullYear() + y);
+    out.push({ proj:true, date:d.toISOString().slice(0,10), units: Math.max(1, Math.round(per)), });
+  }
+  return out;
+}
+function renderGift(g){
+  const c = CAUSES[g.cause], o = OCCASIONS[g.occasion];
+  const delivered = g.stamps.reduce((s,x)=>s+x.units,0);
+  const yearsLive = Math.max(1, Math.floor((Date.now() - new Date(g.createdAt)) / 31557600000) + 1);
+  const proj = projectedStamps(g, g.stamps.length ? yearsLive : 1);
+  const waText = `Hai, ${g.giver.name} baru menanam kebaikan untuk ${g.recipient.name}. Setiap tahun, ${Math.max(1,Math.floor(g.amount*NET_YIELD/c.cost))} ${c.unit} ${c.verb} atas nama ${g.recipient.name}, selamanya. Lihat sertifikatnya:`;
+  app.innerHTML = top() + `
+  <div class="gifthead">
+    <div class="kick">${o.kicker}</div>
+    <h1>${esc(g.recipient.name)}</h1>
+    <p class="muted">Ditanam oleh ${esc(g.giver.name)}, ${fmtDate(g.createdAt)}${g.message ? `. <span class="serif" style="font-style:italic">“${esc(g.message)}”</span>` : ""}</p>
+  </div>
+  <a href="#/poster/${g.id}" style="text-decoration:none;display:block">${posterHTML(g)}</a>
+  <p class="tiny" style="text-align:center;margin-top:8px">Ketuk sertifikat untuk membagikan</p>
+
+  <div class="stat">
+    <div><b>${rp(g.amount)}</b><span>masih tertanam, tidak pernah dipakai</span></div>
+    <div><b>${delivered} ${c.unit}</b><span>sudah ${c.verb}, terverifikasi</span></div>
+  </div>
+
+  <div class="section"><h3>Yang akan tumbuh</h3>
+    <div class="strip">
+      ${[1,10,100].map(N => `<div><b>${calc.units(g.amount, c.cost, N).toLocaleString("id-ID")}</b><span>${c.unit} dalam ${N} tahun</span></div>`).join("")}
+    </div>
+    <p class="tiny">Proyeksi pada imbal hasil bersih ${Math.round(NET_YIELD*100)}%. Hadiah biasa sebesar ini berhenti di ${calc.oneTime(g.amount,c.cost)} ${c.unit}; Kado Abadi melampauinya di tahun ke-${calc.crossover()}.</p>
+  </div>
+
+  <div class="section"><h3>Jejak kebaikan</h3>
+    <ul class="timeline">
+      ${g.stamps.map(s => `<li>
+        <div class="when">${fmtDate(s.date)}</div>
+        <div class="what">${s.units} ${c.unit} ${c.verb} atas nama ${esc(g.recipient.name)}</div>
+        <div class="stamp"><span class="share">Bagian hadiah ini: ${s.units} dari ${s.total.toLocaleString("id-ID")} ${c.unit}</span> · disalurkan ${rp(s.amount)} ke <a href="#">${s.partner}</a> · ${s.location} · ${s.proofs} foto bukti ber-GPS · niat: “${c.label}, ${esc(g.region)}”</div>
+      </li>`).join("")}
+      ${proj.map(s => `<li class="proj">
+        <div class="when">${fmtDate(s.date)} (proyeksi)</div>
+        <div class="what">~${s.units} ${c.unit} ${c.verb}</div>
+        <div class="stamp">Mitra penyalur, lokasi, dan bukti foto akan tercantum di sini saat penyaluran terjadi.</div>
+      </li>`).join("")}
+    </ul>
+  </div>
+
+  <div class="section"><h3>Pesan yang diterima</h3>
+    <div class="wa"><div class="who">Kitabisa</div>${esc(waText)} <span style="color:#1F7A4F">${location.host}/#/gift/${g.id}</span><div class="time">${new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}</div></div>
+    <p class="tiny">Dikirim dari nomor resmi Kitabisa. Tidak ada ajakan donasi di pesan pertama.</p>
+  </div>
+
+  <div class="section">
+    <button class="btn wide" id="join">Ikut menanam untuk ${esc(g.recipient.name)}</button>
+    <div style="height:10px"></div>
+    <a class="btn quiet wide" href="#/create">Tanam untuk orang lain</a>
+  </div>`;
+  q("#join").onclick = () => { draft.recipient = g.recipient.name; draft.occasion = g.occasion; draft.cause = g.cause; draft.region = g.region; go("/create"); toast("Hadiah baru akan menempel di halaman " + g.recipient.name + " (v2)."); };
+  drawQR(g);
+  window.scrollTo(0,0);
+}
+
+/* ---------- poster page ---------- */
+function renderPoster(g){
+  const url = location.origin + location.pathname + "#/gift/" + g.id;
+  const c = CAUSES[g.cause];
+  const share = `${g.giver.name} menanam kebaikan untuk ${g.recipient.name}: ${Math.max(1,Math.floor(g.amount*NET_YIELD/c.cost))} ${c.unit} setiap tahun, selamanya. ${url}`;
+  app.innerHTML = top() + `
+  <h2>Sertifikat Kebaikan</h2>
+  <p class="muted small">1080 × 1350, siap dibagikan ke WhatsApp dan Instagram.</p>
+  ${posterHTML(g, true)}
+  <div class="gap"></div>
+  <a class="btn wide" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">Bagikan lewat WhatsApp</a>
+  <div style="height:10px"></div>
+  <button class="btn quiet wide" id="copy">Salin tautan halaman</button>
+  <div style="height:10px"></div>
+  <a class="btn quiet wide" href="#/gift/${g.id}">Kembali ke halaman ${esc(g.recipient.name)}</a>`;
+  q("#copy").onclick = async () => { try { await navigator.clipboard.writeText(url); toast("Tautan disalin."); } catch(e){ toast(url); } };
+  drawQR(g);
+  window.scrollTo(0,0);
+}
+
+function toast(msg){ const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove("show"), 2600); }
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Kado Abadi — working rules
+
+Read `docs/SPEC.md` before changing anything. These rules are the parts of the spec that are easy to break by accident.
+
+## Product invariants
+- Every gift is perpetual. There is no one-time mode, no spend-down, no "habiskan". Principal is never disbursed.
+- All projection math goes through `calc.js`. Never inline yield or unit-cost numbers anywhere else. If a number in the UI cannot be traced to `calc.js`, it is a bug.
+- Every disbursement (`PoolEvent` of type `DISBURSE`) carries an `intentLine`. Refuse to record one without it.
+- Attribution is pro-rata across every gift alive on the disbursement date with the matching cause. Never assign a disbursement to a single gift by hand.
+- The recipient is the hero of the living page. Their name is the `h1`; the balance is never the headline.
+
+## Copy
+- Verb is "menanam" / "plant". Never "donasi", "donate", "donation", "spend", "payout", "receipt", "balance".
+- Every future number is labelled "proyeksi". Actual stamps replace projections; they never sit as equals.
+- The first WhatsApp message contains no ask and comes from Kitabisa's official number.
+- Describe the certificate as "dirancang untuk [nama]", never "AI-generated".
+
+## Data and safety
+- Recipient photos: template compositing only until a consent flow exists. Giver attests permission at upload.
+- No generative image models on photos of minors.
+- Unit costs in `calc.js` are placeholders until a partner quote replaces them; when you change one, change the comment beside it to name the source.
+
+## Engineering
+- v1 is static and hash-routed; keep it deployable to GitHub Pages until the Next.js migration lands.
+- Run `node --test` before committing. The tests pin the spec's worked example (Rp 1jt → 2 / 24 / 40 / 240 trees at years 1 / 10 / 17 / 100).
+- Indonesian first. Strings live next to the component that uses them for now; extract to a dictionary when the second language lands.

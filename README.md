@@ -33,15 +33,21 @@ Open `index.html` in a browser, or `npx serve .` and visit the printed URL. Noth
 | `#/` | Landing: two paths (send a gift / start a page), occasions, featured pages |
 | `#/create` | Gift flow; `#/create?c=<pageId>` plants into an existing page with cause locked |
 | `#/start` | A couple or new parents start their own page |
-| `#/c/:id` | Campaign page: photo hero, story, collective stats, givers, plant-alongside CTA |
+| `#/c/:id` | Campaign page: photo hero, story, collective stats, givers, plant-alongside CTA. For newborn/birthday pages with a future fund, the private part is never shown here |
+| `#/owner/:id` | Parents' private dashboard: future-fund total, contributors by year, illustrative value at 18 and 21, reshare for the next birthday |
+| `#/b` | Alternate landing ("version B"): landscape gift-card form for A/B comparison. Same domain, same data |
 | `#/gift/:id` | One gift's living page and timeline |
 | `#/poster/:id` | 1080x1350 certificate with QR |
 
 Demo photos are Unsplash-licensed (credited on page). User-uploaded photos stay in the browser only.
 
+## Future fund (newborn and birthday pages)
+
+Guests planting into a newborn or birthday page can split their gift: part to the page's cause (public, shown on the page) and part into the child's future fund (private, parents' dashboard only). The public page never shows fund amounts, so the family is promoting a cause, not asking for money. The fund is meant to sit in a term-savings product from the licensed insurer in the Kitabisa group; the prototype only illustrates growth at `TRUST_RATE`.
+
 ## What is stubbed in v1
 
-Payment (simulated), poster (template compositing, not generative), disbursement stamps (seeded on the demo gift), WhatsApp (message shown, not sent), persistence (browser localStorage only).
+Payment (simulated), the savings product itself (illustrated only), the owner login (dashboard link is open), poster (template compositing, not generative), disbursement stamps (seeded on the demo gift), WhatsApp (message shown, not sent), persistence (browser localStorage only).
 
 ## Roadmap for the team
 

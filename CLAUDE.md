@@ -25,6 +25,11 @@ Read `docs/SPEC.md` before changing anything. These rules are the parts of the s
 - The campaign's cause and region are locked for every gift planted into it. Givers choose only amount and message.
 - Collective numbers on a campaign page are computed from its gifts, never stored.
 
+## Future fund
+- Only newborn and birthday campaigns can enable it (`campaign.trust`). Each gift stores `trustPct`; `causePart(g)` and `trustPart(g)` are the only way to split an amount. Never use `g.amount` directly for impact math.
+- Public surfaces (campaign page, gift page stats, poster, featured cards) use `causePart` only. The trust portion appears only on `#/owner/:id` and, to the giver, as a private note on their own gift page.
+- Growth shown for the fund is labelled an illustration at `TRUST_RATE`. Never call it a guarantee, return, or interest.
+
 ## Language
 - Every user-facing string lives in the `L` dictionary in `index.html` (keys `id` and `en`). Never inline copy in templates.
 - Never name a top-level function after a `window` property (`top`, `name`, `status`, `open`, `parent`, …). It silently kills everything declared after it in browsers. The jsdom render check catches this; run it before committing.

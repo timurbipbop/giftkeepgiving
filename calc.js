@@ -12,6 +12,7 @@
   const MIN_GIFT = 250000;
   const MAX_GIFT = 10000000;
   const STEP = 50000;
+  const TRUST_RATE = 0.045;       // illustrative net return of the child savings product; never a guarantee
 
   const CAUSES = {
     pohon:   { label: "Tanam pohon",   unit: "pohon",         cost: 25000,  verb: "ditanam",   icon: "i-tree", region: ["Jawa Barat", "Banten", "NTT", "Kalimantan Timur"] },
@@ -37,7 +38,10 @@
   /** Pool units minted for a gift of A. */
   function unitsMinted(A) { return Math.floor(A / UNIT_PRICE); }
 
-  const api = { NET_YIELD, UNIT_PRICE, MIN_GIFT, MAX_GIFT, STEP, CAUSES, OCCASIONS, perYearRp, units, oneTime, crossover, unitsMinted };
+  /** Illustrative value of a savings deposit when the child reaches ageTarget. */
+  function trustAt(amount, ageMonths, ageTarget) { return amount * Math.pow(1 + TRUST_RATE, Math.max(0, ageTarget - ageMonths / 12)); }
+
+  const api = { NET_YIELD, TRUST_RATE, trustAt, UNIT_PRICE, MIN_GIFT, MAX_GIFT, STEP, CAUSES, OCCASIONS, perYearRp, units, oneTime, crossover, unitsMinted };
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.KadoCalc = api;

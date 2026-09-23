@@ -162,6 +162,43 @@ input[type=range]{ width:100%; accent-color:var(--moss); }
 .pay{ display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); } .pay:last-of-type{ border-bottom:0; }
 .toast{ position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--fg); color:var(--bg); padding:10px 16px; border-radius:999px; font-size:14px; display:none; z-index:10; max-width:90vw; } .toast.show{ display:block; }
 .hidden{ display:none !important; }
+/* Trust fund split */
+.split{ background:var(--card); border:1.5px solid var(--line); border-radius:20px; padding:16px; margin-top:10px; }
+.split .halves{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+.split .half{ border-radius:14px; padding:12px; background:var(--mist); }
+.split .half.priv{ background:var(--marigold); color:var(--ink); }
+.split .half small{ display:block; font-size:11.5px; opacity:.8; margin-bottom:4px; }
+.split .half b{ display:block; font-family:"Fraunces",serif; font-weight:400; font-size:22px; line-height:1.1; }
+.split .half span{ font-size:12px; opacity:.85; }
+.split .pct{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-top:4px; }
+.lock{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); }
+.priv-note{ margin-top:14px; padding:12px 14px; border-radius:14px; border:1.5px dashed var(--line); font-size:13px; color:var(--muted); display:flex; justify-content:space-between; gap:10px; align-items:center; }
+.priv-note a{ white-space:nowrap; font-weight:600; color:var(--fg); }
+.age{ display:inline-block; background:var(--mist); border-radius:999px; padding:4px 10px; font-size:12px; margin-top:8px; }
+/* Owner dashboard */
+.owner-hero{ background:var(--ink); color:#F2F4EC; border-radius:22px; padding:22px 20px; margin-top:8px; }
+.owner-hero .kick{ font-size:12px; opacity:.7; letter-spacing:.06em; text-transform:uppercase; }
+.owner-hero h1{ color:#F2F4EC; font-size:40px; margin:6px 0 2px; }
+.owner-hero .sub{ opacity:.8; font-size:13px; }
+.product{ border:1.5px solid var(--line); border-radius:16px; padding:14px; display:flex; gap:12px; align-items:flex-start; margin-top:10px; }
+.product .seal2{ flex:none; width:44px; height:44px; border-radius:50%; background:var(--marigold); color:var(--ink); display:grid; place-items:center; font-weight:700; font-size:11px; text-align:center; line-height:1; }
+.product b{ display:block; } .product span{ font-size:12.5px; color:var(--muted); }
+.yeargrp{ margin-top:14px; } .yeargrp h4{ margin:0 0 4px; font-family:"Fraunces",serif; font-weight:400; font-size:18px; }
+/* Landing B: gift-card */
+.app.wide{ max-width:1040px; }
+.b-hero{ text-align:center; padding:28px 0 18px; } .b-hero h1{ font-size:clamp(34px,4.5vw,54px); max-width:22ch; margin:0 auto 10px; } .b-hero p{ color:var(--muted); font-size:17px; }
+.b-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:28px; align-items:start; }
+@media (max-width:820px){ .b-grid{ grid-template-columns:1fr; } }
+.b-form{ background:var(--card); border:1.5px solid var(--line); border-radius:24px; padding:22px; }
+.b-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; } .b-row.three{ grid-template-columns:1fr 1fr 1fr; }
+@media (max-width:520px){ .b-row,.b-row.three{ grid-template-columns:1fr; } }
+.b-form .field{ margin:12px 0; } .b-form label{ font-size:13px; }
+.b-sentence{ font-family:"Fraunces",serif; font-size:24px; line-height:1.35; display:flex; flex-wrap:wrap; gap:8px 10px; align-items:baseline; margin-bottom:14px; }
+.b-sentence .blank{ border-bottom:2px solid var(--marigold); min-width:90px; display:inline-block; color:var(--fg); }
+.b-card{ position:sticky; top:16px; }
+.b-card .poster{ box-shadow:0 30px 60px -30px rgba(23,48,31,.6); }
+.b-foot{ text-align:center; font-size:12.5px; color:var(--muted); margin-top:26px; }
+.ab{ text-align:center; margin-top:28px; font-size:12px; color:var(--muted); } .ab a{ color:var(--muted); }
 </style>
 </head>
 <body style="background:#17301F;color:#EEF2E8">
@@ -178,6 +215,7 @@ input[type=range]{ width:100%; accent-color:var(--moss); }
 <script>
 /* ---------- config ---------- */
 const { NET_YIELD, UNIT_PRICE, MIN_GIFT, MAX_GIFT, STEP, CAUSES } = KadoCalc;
+const TRUST_RATE = 0.045; // illustrative net return of the savings/endowment product; not a guarantee
 const calc = KadoCalc;
 const PHOTOS = {
   nikah:     { url:"https://images.unsplash.com/photo-1552988975-16caafa8e342?w=1200&q=70&auto=format&fit=crop", credit:"Muhammad Ruqi Yaddin / Unsplash" },
@@ -230,6 +268,23 @@ const L = {
     dateLbl:"Tanggal momen", storyLbl:"Ceritamu", storyPh:"Kenapa kalian memilih hadiah yang terus memberi?", hostLbl:"Nama pembuat halaman", hostWa:"WhatsApp kamu (untuk kabar penyaluran)",
     causeLbl:"Ke mana hasilnya setiap tahun", createPage:"Buat halaman", needNames:"Isi nama di halaman dulu.", needHost:"Isi nama pembuat halaman.", pageCreated:"Halaman dibuat. Bagikan tautannya ke tamu.",
     storyDefault:{ nikah:"Kami tidak butuh kado. Yang kami inginkan adalah sesuatu yang tumbuh lebih lama dari pesta ini.", lahir:"Ia baru lahir. Setiap pohon yang ditanam atas namanya akan lebih tinggi darinya untuk beberapa tahun.", ultah:"Tahun ini, aku ingin hadiahnya bertahan lebih dari sehari.", mengenang:"Kebaikannya tidak berhenti. Mari kita lanjutkan atas namanya." },
+    trustOn:"Buka tabungan masa depan untuk anak ini", trustOnHint:"Tamu bisa membagi hadiahnya: sebagian untuk dunia (publik), sebagian ke tabungan masa depan anak (privat). Dikelola lewat produk tabungan berjangka Kitabisa yang berizin asuransi.",
+    whereGift:"Ke mana hadiahmu", forWorld:"Untuk dunia", forWorldSub:"publik, tampil di halaman", forFuture:n=>`Untuk masa depan ${n}`, forFutureSub:"privat, hanya orang tuanya yang melihat",
+    allWorld:"Semua untuk dunia", allFuture:"Semua untuk tabungan", trustLine:(rp,age)=>`~${rp} saat usia 18`, trustIllus:"Ilustrasi pada imbal hasil 4,5%/tahun, bukan jaminan. Produk tabungan berjangka Kitabisa.",
+    trustLbl:"Ke tabungan masa depan (privat)", causeLbl2:"Ke kebaikan (publik)",
+    privNote:n=>`Sebagian hadiah untuk ${n} juga masuk ke tabungan masa depannya. Jumlahnya privat.`, ownerLink:"Dasbor orang tua",
+    giftTrustNote:(rp,n)=>`${rp} dari hadiah ini masuk ke tabungan masa depan ${n}. Bagian ini privat dan tidak tampil di halaman publik.`,
+    posterPlus:"+ tabungan masa depan",
+    ageLbl:(m)=>m<24?`Usia ${m} bulan`:`Usia ${Math.floor(m/12)} tahun`, nextBday:(n,d)=>`Ulang tahun ke-${n}: ${d}`, reshare:n=>`Bagikan lagi untuk ulang tahun ke-${n}`,
+    ownerKick:"Dasbor privat · hanya orang tua", ownerH:n=>`Tabungan masa depan ${n}`, ownerSub:"Tidak ada yang tampil di halaman publik. Tautan ini hanya kamu yang punya.",
+    saved:"terkumpul di tabungan", contributors:"orang menabung untuk anakmu", at18:"ilustrasi saat usia 18", at21:"ilustrasi saat usia 21",
+    productName:"Tabungan Berjangka Kitabisa", productSub:"Produk tabungan berjangka dari perusahaan asuransi berizin di grup Kitabisa. Dana tumbuh untuk anak, bukan untuk platform. Ketentuan produk menyusul di versi produksi.",
+    byYear:"Dari tahun ke tahun", whoSaved:"Yang menabung", noSaved:"Belum ada yang menabung. Bagikan halaman saat ulang tahun berikutnya.",
+    publicSide:"Yang tampil di publik", impactSide:n=>`Halaman ${n} menampilkan dampak sosialnya saja. Tabungan ini tidak pernah tampil.`, backPublic:"Lihat halaman publik", ownerOnly:"Prototipe: di produksi, dasbor ini terkunci di belakang login orang tua.",
+    // landing B
+    bH:"Kirim hadiah yang terus memberi.", bP:"Seperti mengirim kartu ucapan. Bedanya, hadiahnya tumbuh setiap tahun, selamanya.",
+    bFrom:"Dari", bTo:"untuk", bFor:"untuk momen", bSentenceTail:"", bOccasion:"Momen", bCause:"Tanam", bAmount:"Jumlah", bMsg:"Pesan di kartu", bSend:"Kirim hadiah", bPreview:"Pratinjau kartu", bFoot:"Pokok hadiah menjadi wakaf uang abadi yang dikelola nazhir berizin Kitabisa. Penerima mendapat kartu ini via WhatsApp.",
+    abA:"Versi A (mobile, cerita)", abB:"Versi B (kartu hadiah)", abTry:"Untuk tim: coba",
     photoCredit:"Foto",
   },
   en: {
@@ -274,6 +329,22 @@ const L = {
     dateLbl:"Date of the moment", storyLbl:"Your story", storyPh:"Why did you choose a gift that keeps on giving?", hostLbl:"Page owner's name", hostWa:"Your WhatsApp (for delivery updates)",
     causeLbl:"Where the yield goes each year", createPage:"Create the page", needNames:"Enter the names on the page first.", needHost:"Enter the page owner's name.", pageCreated:"Page created. Share the link with your guests.",
     storyDefault:{ nikah:"We don't need presents. What we want is something that outlives the party.", lahir:"He just arrived. Every tree planted in his name will be taller than him for a few years.", ultah:"This year I want a gift that lasts longer than a day.", mengenang:"Their kindness didn't stop. Let's keep it going in their name." },
+    trustOn:"Open a future fund for this child", trustOnHint:"Guests can split their gift: part for the world (public), part into the child's future fund (private). Held in a Kitabisa term-savings product under its insurance licence.",
+    whereGift:"Where your gift goes", forWorld:"For the world", forWorldSub:"public, shown on the page", forFuture:n=>`For ${n}'s future`, forFutureSub:"private, only the parents see it",
+    allWorld:"All to the world", allFuture:"All to the fund", trustLine:(rp,age)=>`~${rp} at age 18`, trustIllus:"Illustration at 4.5%/year, not a guarantee. Kitabisa term-savings product.",
+    trustLbl:"To the future fund (private)", causeLbl2:"To kindness (public)",
+    privNote:n=>`Part of the gifts for ${n} also go into a future fund. The amount is private.`, ownerLink:"Parents' dashboard",
+    giftTrustNote:(rp,n)=>`${rp} of this gift went into ${n}'s future fund. That part is private and does not appear on the public page.`,
+    posterPlus:"+ future fund",
+    ageLbl:(m)=>m<24?`${m} months old`:`${Math.floor(m/12)} years old`, nextBday:(n,d)=>`${n}${n===1?"st":n===2?"nd":n===3?"rd":"th"} birthday: ${d}`, reshare:n=>`Share again for the ${n}${n===1?"st":n===2?"nd":n===3?"rd":"th"} birthday`,
+    ownerKick:"Private dashboard · parents only", ownerH:n=>`${n}'s future fund`, ownerSub:"Nothing here appears on the public page. Only you have this link.",
+    saved:"saved in the fund", contributors:"people saving for your child", at18:"illustration at age 18", at21:"illustration at age 21",
+    productName:"Kitabisa Term Savings", productSub:"A term-savings product from the licensed insurer in the Kitabisa group. The money grows for the child, not the platform. Product terms to follow in production.",
+    byYear:"Year by year", whoSaved:"Who saved", noSaved:"No one has saved yet. Share the page on the next birthday.",
+    publicSide:"What the public sees", impactSide:n=>`${n}'s page shows social impact only. This fund never appears there.`, backPublic:"View public page", ownerOnly:"Prototype: in production this dashboard sits behind the parents' login.",
+    bH:"Send a gift that keeps on giving.", bP:"As easy as a greeting card. Except this one grows every year, forever.",
+    bFrom:"From", bTo:"to", bFor:"for their", bSentenceTail:"", bOccasion:"Moment", bCause:"Plant", bAmount:"Amount", bMsg:"Message on the card", bSend:"Send the gift", bPreview:"Card preview", bFoot:"The principal becomes a perpetual endowment managed by Kitabisa's licensed trustee. The recipient gets this card on WhatsApp.",
+    abA:"Version A (mobile, story)", abB:"Version B (gift card)", abTry:"For the team: try",
     photoCredit:"Photo",
   }
 };
@@ -290,16 +361,17 @@ const nf = n => n.toLocaleString(lang==="id"?"id-ID":"en-US");
 const DEMO_CAMPAIGNS = {
   "KP-AISYAH-RAFI": { id:"KP-AISYAH-RAFI", occasion:"nikah", title:"Aisyah & Rafi", host:"Aisyah", wa:"", photo:PHOTOS.nikah.url, credit:PHOTOS.nikah.credit, date:"2026-10-10", cause:"pohon", region:"Jawa Barat",
     story:{ id:"Kami tidak butuh kado. Yang kami inginkan adalah sesuatu yang tumbuh lebih lama dari pesta ini: sebuah hutan kecil di Jawa Barat yang bertambah setiap tahun, selama kami menua bersama.", en:"We don't need presents. What we want is something that outlives the party: a small forest in West Java that grows a little every year, for as long as we grow old together." } },
-  "KP-THOMAS": { id:"KP-THOMAS", occasion:"lahir", title:"Thomas", host:"James & Sari", wa:"", photo:PHOTOS.lahir.url, credit:PHOTOS.lahir.credit, date:"2025-01-14", cause:"pohon", region:"Banten",
+  "KP-THOMAS": { id:"KP-THOMAS", occasion:"lahir", title:"Thomas", host:"James & Sari", wa:"", photo:PHOTOS.lahir.url, credit:PHOTOS.lahir.credit, date:"2025-01-14", cause:"pohon", region:"Banten", trust:true,
     story:{ id:"Thomas lahir 14 Januari. Alih-alih mainan yang akan ia lupakan, kami ingin ia tumbuh bersama pohon-pohon yang ditanam atas namanya, dan suatu hari melihatnya sendiri.", en:"Thomas was born on 14 January. Instead of toys he will forget, we want him to grow up alongside trees planted in his name, and one day go and see them himself." } },
 };
 const STAMP_A = { date:"2025-03-12", total:4000, partner:"Yayasan Hijau Lestari", location:"Pandeglang, Banten", amount:100000000, proofs:3 };
 const DEMO_GIFTS = [
   { id:"KA-2025-000148", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:1000000, recipient:{name:"Thomas"}, giver:{name:"Timmy"}, message:"Semoga tumbuh tinggi seperti pohon-pohon ini, Thomas.", createdAt:"2025-01-20",
     stamps:[ Object.assign({units:2}, STAMP_A), { date:"2026-02-08", units:3, total:5200, partner:"Yayasan Hijau Lestari", location:"Lebak, Banten", amount:130000000, proofs:4 } ] },
-  { id:"KA-2025-000151", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:500000, recipient:{name:"Thomas"}, giver:{name:"Nenek Ratna"}, message:"Dari nenek, untuk cucu pertamaku.", createdAt:"2025-01-21", stamps:[Object.assign({units:1}, STAMP_A)] },
-  { id:"KA-2025-000163", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:2000000, recipient:{name:"Thomas"}, giver:{name:"Tim Kantor Sari"}, message:"Selamat, Sari! Dari kami semua di kantor.", createdAt:"2025-01-23", stamps:[Object.assign({units:4}, STAMP_A)] },
-  { id:"KA-2025-000170", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:250000, recipient:{name:"Thomas"}, giver:{name:"Dimas"}, message:"", createdAt:"2025-02-02", stamps:[] },
+  { id:"KA-2025-000151", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:500000, recipient:{name:"Thomas"}, giver:{name:"Nenek Ratna"}, message:"Dari nenek, untuk cucu pertamaku.", createdAt:"2025-01-21", trustPct:70, stamps:[Object.assign({units:1}, STAMP_A)] },
+  { id:"KA-2025-000163", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:2000000, recipient:{name:"Thomas"}, giver:{name:"Tim Kantor Sari"}, message:"Selamat, Sari! Dari kami semua di kantor.", createdAt:"2025-01-23", trustPct:50, stamps:[Object.assign({units:2}, STAMP_A)] },
+  { id:"KA-2025-000170", campaignId:"KP-THOMAS", occasion:"lahir", cause:"pohon", region:"Banten", amount:250000, recipient:{name:"Thomas"}, giver:{name:"Dimas"}, message:"", createdAt:"2025-02-02", trustPct:100, stamps:[] },
+  { id:"KA-2026-000210", campaignId:"KP-THOMAS", occasion:"ultah", cause:"pohon", region:"Banten", amount:1500000, recipient:{name:"Thomas"}, giver:{name:"Om Bayu & Tante Rina"}, message:"Selamat ulang tahun pertama, Thomas!", createdAt:"2026-01-14", trustPct:60, stamps:[] },
   { id:"KA-2026-000901", campaignId:"KP-AISYAH-RAFI", occasion:"nikah", cause:"pohon", region:"Jawa Barat", amount:3000000, recipient:{name:"Aisyah & Rafi"}, giver:{name:"Keluarga Besar Hidayat"}, message:"Barakallahu lakuma. Semoga rindang seperti hutan ini.", createdAt:"2026-09-02", stamps:[] },
   { id:"KA-2026-000917", campaignId:"KP-AISYAH-RAFI", occasion:"nikah", cause:"pohon", region:"Jawa Barat", amount:1000000, recipient:{name:"Aisyah & Rafi"}, giver:{name:"Nadia"}, message:"Untuk sahabatku sejak SMA. Love you both.", createdAt:"2026-09-05", stamps:[] },
   { id:"KA-2026-000920", campaignId:"KP-AISYAH-RAFI", occasion:"nikah", cause:"pohon", region:"Jawa Barat", amount:5000000, recipient:{name:"Aisyah & Rafi"}, giver:{name:"Pak Hendra & Bu Wati"}, message:"Dari orang tua Rafi. Kami bangga.", createdAt:"2026-09-06", stamps:[] },
@@ -319,9 +391,15 @@ function persist(){
   try { const g={}; for (const k in gifts) if (!DEMO_GIFTS.find(d=>d.id===k)) g[k]=gifts[k]; localStorage.setItem("ka.gifts", JSON.stringify(g)); } catch(e){}
   try { const c={}; for (const k in campaigns) if (!DEMO_CAMPAIGNS[k]) c[k]=campaigns[k]; localStorage.setItem("ka.campaigns", JSON.stringify(c)); } catch(e){}
 }
-const draft = { occasion:"lahir", cause:"pohon", region:"Jawa Barat", amount:1000000, years:10, recipient:"", wa:"", giver:"", message:"", campaignId:null };
-const cdraft = { occasion:"nikah", title:"", host:"", wa:"", date:"", story:"", cause:"pohon", region:"Jawa Barat", photo:null };
+const draft = { occasion:"lahir", cause:"pohon", region:"Jawa Barat", amount:1000000, years:10, recipient:"", wa:"", giver:"", message:"", campaignId:null, trustPct:0 };
+const cdraft = { occasion:"nikah", title:"", host:"", wa:"", date:"", story:"", cause:"pohon", region:"Jawa Barat", photo:null, trust:true };
 const campaignGifts = id => Object.values(gifts).filter(g => g.campaignId === id).sort((a,b)=>a.createdAt<b.createdAt?1:-1);
+const trustPart = g => Math.round(g.amount * ((g.trustPct||0)/100));
+const causePart = g => g.amount - trustPart(g);
+const trustEligible = c => !!c && !!c.trust && (c.occasion==="lahir" || c.occasion==="ultah");
+function ageMonths(dateStr){ const b = new Date(dateStr), n = new Date(); return Math.max(0, (n.getFullYear()-b.getFullYear())*12 + (n.getMonth()-b.getMonth()) - (n.getDate()<b.getDate()?1:0)); }
+function nextBirthday(dateStr){ const b = new Date(dateStr), n = new Date(); let y = n.getFullYear(); let d = new Date(y, b.getMonth(), b.getDate()); if (d < n) d = new Date(y+1, b.getMonth(), b.getDate()); return { date:d, nth: d.getFullYear()-b.getFullYear() }; }
+const trustAt = (amount, months, ageTarget) => amount * Math.pow(1+TRUST_RATE, Math.max(0, ageTarget - months/12));
 
 /* ---------- router ---------- */
 const app = document.getElementById("app");
@@ -333,6 +411,8 @@ function render(){
   document.documentElement.lang = lang;
   if (p === "create") return renderCreate(params.get("c"));
   if (p === "start") return renderStart();
+  if (p === "b") return renderLandingB();
+  if (p === "owner" && campaigns[id]) return renderOwner(campaigns[id]);
   if (p === "c" && campaigns[id]) return renderCampaign(campaigns[id]);
   if (p === "gift" && gifts[id]) return renderGift(gifts[id]);
   if (p === "poster" && gifts[id]) return renderPoster(gifts[id]);
@@ -343,7 +423,7 @@ function topBar(){
   return `<div class="top"><a class="brand" href="#/"><svg viewBox="0 0 24 24"><use href="#i-seed"/></svg>Kado Abadi <span class="tiny" style="margin-left:2px">${T().tagline}</span></a>
   <div class="lang" role="group"><button data-l="id" aria-pressed="${lang==="id"}">ID</button><button data-l="en" aria-pressed="${lang==="en"}">EN</button></div></div>`;
 }
-function finish(){ document.querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.l)); window.scrollTo(0,0); }
+function finish(){ document.querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.l)); app.classList.toggle("wide", route().p==="b"); window.scrollTo(0,0); }
 function q(s){ return document.querySelector(s); }
 function esc(s){ return String(s||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 function initial(s){ return (s||"?").trim()[0].toUpperCase(); }
@@ -358,10 +438,11 @@ function renderLanding(){
   <h3>${t.occTitle}</h3>
   <div class="occasions">${Object.keys(PHOTOS).map(k => `<button class="occ" data-occ="${k}"><img src="${PHOTOS[k].url}" alt="" loading="lazy"><div class="shade"></div><div class="t"><b>${occName(k)}</b><span>${occSub(k)}</span></div></button>`).join("")}</div>
   <section class="feat"><h3>${t.featured}</h3>
-    ${feats.map(c => { const gs = campaignGifts(c.id); const tot = gs.reduce((s,g)=>s+g.amount,0); const per = Math.floor(tot*NET_YIELD/CAUSES[c.cause].cost);
+    ${feats.map(c => { const gs = campaignGifts(c.id); const tot = gs.reduce((s,g)=>s+causePart(g),0); const per = Math.floor(tot*NET_YIELD/CAUSES[c.cause].cost);
       return `<a class="featcard" href="#/c/${c.id}"><img src="${campaignPhoto(c)}" alt="" loading="lazy"><div class="shade"></div><div class="t"><b>${esc(c.title)}</b><span>${occName(c.occasion)} · ${t.featLine(gs.length, per, causeUnit(c.cause))}</span></div></a>`; }).join("")}
   </section>
-  <section class="how"><h3>${t.howH}</h3><ol><li>${t.how1}</li><li>${t.how2}</li><li>${t.how3}</li></ol></section>`;
+  <section class="how"><h3>${t.howH}</h3><ol><li>${t.how1}</li><li>${t.how2}</li><li>${t.how3}</li></ol></section>
+  <p class="ab">${t.abTry} <a href="#/b">${t.abB}</a></p>`;
   app.querySelectorAll("[data-occ]").forEach(b => b.onclick = () => { draft.occasion = b.dataset.occ; draft.campaignId = null; go("/create"); });
   finish();
 }
@@ -390,7 +471,8 @@ function calcCard(A, causeKey, N){
 /* ---------- create gift ---------- */
 function renderCreate(campaignId){
   const t = T(); const c = campaignId && campaigns[campaignId];
-  if (c) { draft.campaignId = c.id; draft.occasion = c.occasion; draft.cause = c.cause; draft.region = c.region; draft.recipient = c.title; } else draft.campaignId = null;
+  if (c) { if (draft.campaignId !== c.id) draft.trustPct = trustEligible(c) ? 50 : 0; draft.campaignId = c.id; draft.occasion = c.occasion; draft.cause = c.cause; draft.region = c.region; draft.recipient = c.title; if (!trustEligible(c)) draft.trustPct = 0; } else { draft.campaignId = null; draft.trustPct = 0; }
+  const te = trustEligible(c);
   if (!CAUSES[draft.cause].region.includes(draft.region)) draft.region = CAUSES[draft.cause].region[0];
   app.innerHTML = topBar() + `
   <h2>${occKick(draft.occasion)}</h2><p class="muted">${t.oneGift}</p>
@@ -405,7 +487,8 @@ function renderCreate(campaignId){
   <div class="field"><label>${t.howMuch}</label>
     <div class="amount"><b id="amt">${rp(draft.amount)}</b><span class="small muted">${nf(calc.unitsMinted(draft.amount))} ${t.units}</span></div>
     <input type="range" id="amount" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}" aria-label="amount">
-    <div id="calcwrap">${calcCard(draft.amount, draft.cause, draft.years)}</div></div>
+    ${te ? `<div id="splitwrap">${splitCard(c)}</div>` : ""}
+    <div id="calcwrap">${calcCard(causeAmt(), draft.cause, draft.years)}</div></div>
   <div class="field"><label for="gname">${t.from}</label><input class="input" id="gname" placeholder="${t.yourName}" value="${esc(draft.giver)}"></div>
   <div class="field"><label for="msg">${t.message}</label><textarea class="input" id="msg" placeholder="${t.msgPh}">${esc(draft.message)}</textarea></div>
   <button class="btn wide" id="submit">${t.plantNow}</button>
@@ -418,10 +501,23 @@ function renderCreate(campaignId){
     q("#photo").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { photos.draft = r.result; q("#avatar").innerHTML = `<img src="${r.result}" alt="">`; }; r.readAsDataURL(f); };
   }
   q("#gname").oninput = e => draft.giver = e.target.value; q("#msg").oninput = e => draft.message = e.target.value;
-  q("#amount").oninput = e => { draft.amount = +e.target.value; q("#amt").textContent = rp(draft.amount); refreshCalc(); };
-  bindYears(); q("#submit").onclick = openPay; finish();
+  q("#amount").oninput = e => { draft.amount = +e.target.value; q("#amt").textContent = rp(draft.amount); refreshSplit(c); refreshCalc(); };
+  bindSplit(c); bindYears(); q("#submit").onclick = openPay; finish();
 }
-function refreshCalc(){ q("#calcwrap").innerHTML = calcCard(draft.amount, draft.cause, draft.years); bindYears(); }
+const causeAmt = () => draft.amount - Math.round(draft.amount*draft.trustPct/100);
+function splitCard(c){
+  const t = T(); const name = c.title; const tr = Math.round(draft.amount*draft.trustPct/100), ca = draft.amount - tr; const months = ageMonths(c.date);
+  return `<div class="split"><div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-weight:600">${t.whereGift}</b><span class="lock">🔒 ${t.forFutureSub}</span></div>
+    <input type="range" id="trust" min="0" max="100" step="10" value="${draft.trustPct}" aria-label="split" style="margin-top:10px">
+    <div class="pct"><span>${t.allWorld}</span><span>${t.allFuture}</span></div>
+    <div class="halves">
+      <div class="half"><small>${t.forWorld} · ${100-draft.trustPct}%</small><b>${rp(ca)}</b><span>${Math.floor(ca*NET_YIELD/CAUSES[c.cause].cost)} ${causeUnit(c.cause)}/${t.perYearShort} · ${t.forWorldSub}</span></div>
+      <div class="half priv"><small>${t.forFuture(esc(name))} · ${draft.trustPct}%</small><b>${rp(tr)}</b><span>${tr>0 ? t.trustLine(rp(trustAt(tr, months, 18))) : "—"}</span></div>
+    </div><p class="tiny" style="margin-top:8px">${t.trustIllus}</p></div>`;
+}
+function refreshSplit(c){ const w = q("#splitwrap"); if (w && c) { w.innerHTML = splitCard(c); bindSplit(c); } }
+function bindSplit(c){ const r = q("#trust"); if (r) r.oninput = e => { draft.trustPct = +e.target.value; refreshSplit(c); refreshCalc(); }; }
+function refreshCalc(){ q("#calcwrap").innerHTML = calcCard(causeAmt(), draft.cause, draft.years); bindYears(); }
 function bindYears(){ const y = q("#years"); if (y) y.oninput = e => { draft.years = +e.target.value; refreshCalc(); }; }
 function bindPills(sel, fn){ document.querySelectorAll(sel+" .pill").forEach(b => b.onclick = () => fn(b.dataset.k)); }
 
@@ -433,14 +529,14 @@ function openPay(){
   m.innerHTML = `<div class="sheet"><h3>${t.confirm}</h3>
     <div class="pay"><span>${t.forLbl}</span><b>${esc(draft.recipient)}</b></div>
     <div class="pay"><span>${t.plantLbl}</span><b>${causeName(draft.cause)}, ${esc(draft.region)}</b></div>
-    <div class="pay"><span>${t.principalLbl}</span><b>${rp(draft.amount)}</b></div>
-    <div class="pay"><span>${t.yearlyLbl}</span><b>~${(draft.amount*NET_YIELD/c.cost).toFixed(1)} ${causeUnit(draft.cause)}</b></div>
+    ${draft.trustPct>0 ? `<div class="pay"><span>${t.causeLbl2}</span><b>${rp(causeAmt())}</b></div><div class="pay"><span>${t.trustLbl}</span><b>${rp(draft.amount-causeAmt())}</b></div>` : `<div class="pay"><span>${t.principalLbl}</span><b>${rp(draft.amount)}</b></div>`}
+    <div class="pay"><span>${t.yearlyLbl}</span><b>~${(causeAmt()*NET_YIELD/c.cost).toFixed(1)} ${causeUnit(draft.cause)}</b></div>
     <div class="gap"></div><button class="btn wide" id="pay">${t.pay(rp(draft.amount))}</button><div style="height:10px"></div><button class="btn quiet wide" id="cancel">${t.back}</button>
     <p class="tiny" style="margin-top:12px;text-align:center">${t.simulated}</p></div>`;
   m.classList.add("open"); q("#cancel").onclick = () => m.classList.remove("open");
   q("#pay").onclick = () => {
     const id = "KA-"+new Date().getFullYear()+"-"+String(Math.floor(Math.random()*900000)+100000);
-    gifts[id] = { id, campaignId:draft.campaignId, occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient.trim(), wa:draft.wa}, giver:{name:draft.giver.trim()}, message:draft.message.trim(), createdAt:new Date().toISOString().slice(0,10), stamps:[] };
+    gifts[id] = { id, campaignId:draft.campaignId, occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient.trim(), wa:draft.wa}, giver:{name:draft.giver.trim()}, message:draft.message.trim(), createdAt:new Date().toISOString().slice(0,10), trustPct:draft.trustPct||0, stamps:[] };
     if (photos.draft) { photos[id] = photos.draft; delete photos.draft; }
     persist(); m.classList.remove("open"); toast(t.planted);
     const dest = draft.campaignId ? "/c/"+draft.campaignId : "/gift/"+id;
@@ -462,6 +558,7 @@ function renderStart(){
   <div class="field"><label for="cstory">${t.storyLbl}</label><textarea class="input" id="cstory" placeholder="${t.storyPh}">${esc(cdraft.story || t.storyDefault[cdraft.occasion])}</textarea></div>
   <div class="field"><label>${t.causeLbl}</label><div class="pills" id="ccause">${Object.keys(CAUSES).map(k=>`<button class="pill" data-k="${k}" aria-pressed="${k===cdraft.cause}">${causeName(k)}</button>`).join("")}</div>
     <select class="input" id="cregion" style="margin-top:10px">${CAUSES[cdraft.cause].region.map(r=>`<option ${r===cdraft.region?"selected":""}>${r}</option>`).join("")}</select></div>
+  ${(cdraft.occasion==="lahir"||cdraft.occasion==="ultah") ? `<div class="field"><label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="ctrust" ${cdraft.trust?"checked":""} style="margin-top:4px;width:18px;height:18px;accent-color:var(--moss)"><span>${t.trustOn}<div class="hint" style="font-weight:400">${t.trustOnHint}</div></span></label></div>` : ""}
   <div class="field"><label for="chost">${t.hostLbl}</label><input class="input" id="chost" value="${esc(cdraft.host)}"></div>
   <div class="field"><label for="cwa">${t.hostWa}</label><input class="input" id="cwa" inputmode="tel" placeholder="+62 812 …" value="${esc(cdraft.wa)}"></div>
   <button class="btn wide" id="csubmit">${t.createPage}</button>`;
@@ -470,13 +567,14 @@ function renderStart(){
   q("#ctitle").oninput = e => cdraft.title = e.target.value; q("#cdate").onchange = e => cdraft.date = e.target.value;
   q("#cstory").oninput = e => cdraft.story = e.target.value; q("#cregion").onchange = e => cdraft.region = e.target.value;
   q("#chost").oninput = e => cdraft.host = e.target.value; q("#cwa").oninput = e => cdraft.wa = e.target.value;
+  const ct = q("#ctrust"); if (ct) ct.onchange = e => cdraft.trust = e.target.checked;
   q("#cphoto").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { cdraft.photo = r.result; renderStart(); }; r.readAsDataURL(f); };
   q("#csubmit").onclick = () => {
     if (!cdraft.title.trim()) { toast(t.needNames); q("#ctitle").focus(); return; }
     if (!cdraft.host.trim()) { toast(t.needHost); q("#chost").focus(); return; }
     const id = "KP-" + cdraft.title.trim().toUpperCase().replace(/[^A-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,20) + "-" + String(Math.floor(Math.random()*9000)+1000);
     const story = (cdraft.story || t.storyDefault[cdraft.occasion]).trim();
-    campaigns[id] = { id, occasion:cdraft.occasion, title:cdraft.title.trim(), host:cdraft.host.trim(), wa:cdraft.wa, photo:cdraft.photo?null:PHOTOS[cdraft.occasion].url, credit:cdraft.photo?"":PHOTOS[cdraft.occasion].credit, date:cdraft.date||new Date().toISOString().slice(0,10), cause:cdraft.cause, region:cdraft.region, story:{ id:story, en:story } };
+    campaigns[id] = { id, occasion:cdraft.occasion, title:cdraft.title.trim(), host:cdraft.host.trim(), wa:cdraft.wa, photo:cdraft.photo?null:PHOTOS[cdraft.occasion].url, credit:cdraft.photo?"":PHOTOS[cdraft.occasion].credit, date:cdraft.date||new Date().toISOString().slice(0,10), cause:cdraft.cause, region:cdraft.region, story:{ id:story, en:story }, trust:(cdraft.occasion==="lahir"||cdraft.occasion==="ultah") && cdraft.trust };
     if (cdraft.photo) { photos[id] = cdraft.photo; try { localStorage.setItem("ka.photo."+id, cdraft.photo); } catch(e){} }
     persist(); toast(t.pageCreated); cdraft.title=""; cdraft.story=""; cdraft.photo=null; go("/c/"+id);
   };
@@ -486,12 +584,13 @@ function renderStart(){
 /* ---------- campaign page ---------- */
 function renderCampaign(c){
   const t = T(); const gs = campaignGifts(c.id); const cc = CAUSES[c.cause], unit = causeUnit(c.cause);
-  const total = gs.reduce((s,g)=>s+g.amount,0); const delivered = gs.reduce((s,g)=>s+g.stamps.reduce((a,x)=>a+x.units,0),0);
+  const total = gs.reduce((s,g)=>s+causePart(g),0); const delivered = gs.reduce((s,g)=>s+g.stamps.reduce((a,x)=>a+x.units,0),0);
   const perYear = total*NET_YIELD/cc.cost; const url = location.origin + location.pathname + "#/c/" + c.id;
   const story = typeof c.story === "string" ? c.story : (c.story[lang] || c.story.id);
+  const te = trustEligible(c); const isChild = c.occasion==="lahir"||c.occasion==="ultah"; const nb = isChild ? nextBirthday(c.date) : null;
   app.innerHTML = topBar() + `
   <div class="photo-hero"><img src="${campaignPhoto(c)}" alt=""><div class="shade"></div><div class="ribbon">${occName(c.occasion)}</div>
-    <div class="text"><div class="kick">${occKick(c.occasion)}</div><h1>${esc(c.title)}</h1><div class="date">${fmtDate(c.date)} · ${esc(c.region)}</div></div></div>
+    <div class="text"><div class="kick">${occKick(c.occasion)}</div><h1>${esc(c.title)}</h1><div class="date">${fmtDate(c.date)} · ${esc(c.region)}</div>${isChild ? `<span class="age">${t.ageLbl(ageMonths(c.date))} · ${t.nextBday(nb.nth, fmtDate(nb.date))}</span>` : ""}</div></div>
   ${c.credit ? `<div class="credit">${t.photoCredit}: ${c.credit}</div>` : ""}
   <p class="story serif">“${esc(story)}”</p>
   <div class="host"><div class="avatar">${initial(c.host)}</div><span>${t.hostedBy(esc(c.host))}</span></div>
@@ -509,12 +608,13 @@ function renderCampaign(c){
   </div>
   <div class="section"><h3>${t.givers}</h3>
     ${gs.length ? `<ul class="givers">${gs.map(g => `<li><div class="avatar">${initial(g.giver.name)}</div><div style="flex:1">
-      <div class="who"><span style="font-weight:600">${esc(g.giver.name)}</span><span>${rp(g.amount)}</span></div>
+      <div class="who"><span style="font-weight:600">${esc(g.giver.name)}</span><span>${rp(causePart(g))}</span></div>
       ${g.message ? `<div class="msg">“${esc(g.message)}”</div>` : ""}
-      <div class="meta">${fmtDate(g.createdAt)} · ~${(g.amount*NET_YIELD/cc.cost).toFixed(1)} ${unit}/${t.perYearShort} · <a href="#/gift/${g.id}">${t.certLink}</a></div></div></li>`).join("")}</ul>` : `<p class="muted">${t.noGivers}</p>`}
+      <div class="meta">${fmtDate(g.createdAt)} · ~${(causePart(g)*NET_YIELD/cc.cost).toFixed(1)} ${unit}/${t.perYearShort}${trustPart(g)>0?` · 🔒 ${t.posterPlus}`:""} · <a href="#/gift/${g.id}">${t.certLink}</a></div></div></li>`).join("")}</ul>` : `<p class="muted">${t.noGivers}</p>`}
   </div>
+  ${te ? `<div class="priv-note"><span>🔒 ${t.privNote(esc(c.title))}</span><a href="#/owner/${c.id}">${t.ownerLink} →</a></div>` : ""}
   <div class="section"><h3>${t.sharePage}</h3>
-    <a class="btn quiet wide" href="https://wa.me/?text=${encodeURIComponent(t.cShare(c.title, url))}" target="_blank" rel="noopener">${t.shareWa}</a><div style="height:10px"></div>
+    <a class="btn quiet wide" href="https://wa.me/?text=${encodeURIComponent(t.cShare(c.title, url))}" target="_blank" rel="noopener">${isChild ? t.reshare(nb.nth) : t.shareWa}</a><div style="height:10px"></div>
     <button class="btn quiet wide" id="copy">${t.copyLink}</button>
   </div>
   <div class="sticky"><a class="btn gold wide" href="#/create?c=${c.id}">${t.plantAlong} · ${esc(c.title)}</a></div>`;
@@ -524,7 +624,7 @@ function renderCampaign(c){
 
 /* ---------- poster ---------- */
 function posterHTML(g){
-  const t = T(), c = CAUSES[g.cause], unit = causeUnit(g.cause); const perYear = g.amount*NET_YIELD/c.cost;
+  const t = T(), c = CAUSES[g.cause], unit = causeUnit(g.cause); const perYear = causePart(g)*NET_YIELD/c.cost;
   const yearly = perYear >= 1 ? t.yearly(Math.floor(perYear), unit) : t.per10(Math.max(1,Math.round(perYear*10)), unit);
   const photo = photos[g.id];
   return `<div class="poster" id="poster-${g.id}">
@@ -532,7 +632,7 @@ function posterHTML(g){
     <div class="frame"></div>
     <div class="content"><div class="kicker">${occKick(g.occasion)}</div><div class="name">${esc(g.recipient.name)}</div>
       <div class="arch">${photo?`<img src="${photo}" alt="">`:esc(initial(g.recipient.name))}</div>
-      <div class="line">${t.posterLine(yearly, esc(g.region), esc(g.recipient.name))}</div>
+      <div class="line">${t.posterLine(yearly, esc(g.region), esc(g.recipient.name))}${trustPart(g)>0?`<div style="font-size:3cqw;opacity:.8;margin-top:2%">${t.posterPlus}</div>`:""}</div>
       <div class="from">${t.posterFrom(esc(g.giver.name), fmtDate(g.createdAt))}</div></div>
     <div class="footer"><div class="seal">Kado Abadi<small>${t.sealSub}</small></div><div class="qr" id="qr-${g.id}"></div></div>
     <div class="fid">giftkeepgiving.com &nbsp;·&nbsp; ${g.id}</div></div>`;
@@ -544,7 +644,7 @@ function drawQR(g){
 
 /* ---------- gift page ---------- */
 function projectedStamps(g, fromYear){
-  const c = CAUSES[g.cause]; const per = g.amount*NET_YIELD/c.cost; const out = []; const start = new Date(g.createdAt);
+  const c = CAUSES[g.cause]; const per = causePart(g)*NET_YIELD/c.cost; const out = []; const start = new Date(g.createdAt);
   for (let y=fromYear; y<fromYear+3; y++){ const d = new Date(start); d.setFullYear(start.getFullYear()+y); out.push({ proj:true, date:d.toISOString().slice(0,10), units:Math.max(1,Math.round(per)) }); }
   return out;
 }
@@ -553,17 +653,18 @@ function renderGift(g){
   const delivered = g.stamps.reduce((s,x)=>s+x.units,0);
   const yearsLive = Math.max(1, Math.floor((Date.now()-new Date(g.createdAt))/31557600000)+1);
   const proj = projectedStamps(g, g.stamps.length ? yearsLive : 1);
-  const n = Math.max(1, Math.floor(g.amount*NET_YIELD/c.cost));
+  const ca = causePart(g), tr = trustPart(g); const n = Math.max(1, Math.floor(ca*NET_YIELD/c.cost));
   const camp = g.campaignId && campaigns[g.campaignId];
   app.innerHTML = topBar() + `
   <div style="padding:12px 0 6px"><div class="muted small">${occKick(g.occasion)}</div><h1>${esc(g.recipient.name)}</h1>
     <p class="muted">${t.plantedBy(esc(g.giver.name), fmtDate(g.createdAt))}${g.message?`. <span class="serif" style="font-style:italic">“${esc(g.message)}”</span>`:""}</p></div>
   <a href="#/poster/${g.id}" style="text-decoration:none;display:block">${posterHTML(g)}</a>
   <p class="tiny" style="text-align:center;margin-top:8px">${t.tapPoster}</p>
-  <div class="stat"><div><b>${rp(g.amount)}</b><span>${t.stillIn}</span></div><div><b>${delivered} ${unit}</b><span>${t.delivered(verb)}</span></div></div>
+  <div class="stat"><div><b>${rp(ca)}</b><span>${t.stillIn}</span></div><div><b>${delivered} ${unit}</b><span>${t.delivered(verb)}</span></div></div>
+  ${tr>0 ? `<div class="priv-note"><span>🔒 ${t.giftTrustNote(rp(tr), esc(g.recipient.name))}</span></div>` : ""}
   <div class="section"><h3>${t.willGrow}</h3>
-    <div class="strip">${[1,10,100].map(N=>`<div><b>${nf(calc.units(g.amount,c.cost,N))}</b><span>${t.inN(unit,N)}</span></div>`).join("")}</div>
-    <p class="tiny">${t.projStrip(Math.round(NET_YIELD*100), calc.oneTime(g.amount,c.cost), unit, calc.crossover())}</p></div>
+    <div class="strip">${[1,10,100].map(N=>`<div><b>${nf(calc.units(ca,c.cost,N))}</b><span>${t.inN(unit,N)}</span></div>`).join("")}</div>
+    <p class="tiny">${t.projStrip(Math.round(NET_YIELD*100), calc.oneTime(ca,c.cost), unit, calc.crossover())}</p></div>
   <div class="section"><h3>${t.trail}</h3><ul class="timeline">
     ${g.stamps.map(s=>`<li><div class="when">${fmtDate(s.date)}</div><div class="what">${s.units} ${unit} ${verb}</div>
       <div class="stamp"><span class="share">${t.share(s.units, nf(s.total), unit)}</span>${t.stampTail(rp(s.amount), s.partner, s.location, s.proofs, causeName(g.cause), esc(g.region))}</div></li>`).join("")}
@@ -582,13 +683,84 @@ function renderGift(g){
 /* ---------- poster page ---------- */
 function renderPoster(g){
   const t = T(), c = CAUSES[g.cause], unit = causeUnit(g.cause); const url = location.origin+location.pathname+"#/gift/"+g.id;
-  const share = t.shareText(g.giver.name, g.recipient.name, Math.max(1,Math.floor(g.amount*NET_YIELD/c.cost)), unit, url);
+  const share = t.shareText(g.giver.name, g.recipient.name, Math.max(1,Math.floor(causePart(g)*NET_YIELD/c.cost)), unit, url);
   app.innerHTML = topBar() + `<h2>${t.cert}</h2><p class="muted small">${t.certSub}</p>${posterHTML(g)}<div class="gap"></div>
   <a class="btn wide" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">${t.shareWa}</a><div style="height:10px"></div>
   <button class="btn quiet wide" id="copy">${t.copyLink}</button><div style="height:10px"></div>
   <a class="btn quiet wide" href="#/gift/${g.id}">${t.backTo(esc(g.recipient.name))}</a>`;
   q("#copy").onclick = async () => { try { await navigator.clipboard.writeText(url); toast(t.copied); } catch(e){ toast(url); } };
   drawQR(g); finish();
+}
+
+/* ---------- owner dashboard (private) ---------- */
+function renderOwner(c){
+  const t = T(); const gs = campaignGifts(c.id).filter(g => trustPart(g) > 0); const all = campaignGifts(c.id);
+  const saved = gs.reduce((s,g)=>s+trustPart(g),0); const months = ageMonths(c.date);
+  const byYear = {}; gs.forEach(g => { const y = g.createdAt.slice(0,4); (byYear[y] ||= []).push(g); });
+  const years = Object.keys(byYear).sort().reverse();
+  const causeTot = all.reduce((s,g)=>s+causePart(g),0);
+  app.innerHTML = topBar() + `
+  <div class="owner-hero"><div class="kick">${t.ownerKick}</div><h1>${rp(saved)}</h1><div class="sub">${t.saved} · ${t.ownerH(esc(c.title))}</div><div class="sub" style="margin-top:8px">${t.ownerSub}</div></div>
+  <div class="stat">
+    <div><b>${gs.length}</b><span>${t.contributors}</span></div>
+    <div><b>${t.ageLbl(months)}</b><span>${esc(c.title)} · ${fmtDate(c.date)}</span></div>
+    <div><b>${rp(trustAt(saved, months, 18))}</b><span>${t.at18}</span></div>
+    <div><b>${rp(trustAt(saved, months, 21))}</b><span>${t.at21}</span></div>
+  </div>
+  <p class="tiny">${t.trustIllus}</p>
+  <div class="product"><div class="seal2">Kita<br>bisa</div><div><b>${t.productName}</b><span>${t.productSub}</span></div></div>
+  <div class="section"><h3>${t.whoSaved}</h3>
+    ${gs.length ? years.map(y => `<div class="yeargrp"><h4>${y} · ${rp(byYear[y].reduce((s,g)=>s+trustPart(g),0))}</h4><ul class="givers">${byYear[y].map(g => `<li><div class="avatar">${initial(g.giver.name)}</div><div style="flex:1">
+      <div class="who"><span style="font-weight:600">${esc(g.giver.name)}</span><span>${rp(trustPart(g))}</span></div>
+      <div class="meta">${fmtDate(g.createdAt)} · ${g.trustPct}% ${t.trustLbl.toLowerCase()} · ${100-g.trustPct}% ${t.causeLbl2.toLowerCase()} (${rp(causePart(g))})</div></div></li>`).join("")}</ul></div>`).join("") : `<p class="muted">${t.noSaved}</p>`}
+  </div>
+  <div class="section"><h3>${t.publicSide}</h3><p class="muted small">${t.impactSide(esc(c.title))} ${rp(causeTot)} · ${Math.floor(causeTot*NET_YIELD/CAUSES[c.cause].cost)} ${causeUnit(c.cause)}/${t.perYearShort}.</p>
+    <a class="btn quiet wide" href="#/c/${c.id}">${t.backPublic}</a><div style="height:10px"></div>
+    <a class="btn gold wide" href="https://wa.me/?text=${encodeURIComponent(t.cShare(c.title, location.origin+location.pathname+"#/c/"+c.id))}" target="_blank" rel="noopener">${t.reshare(nextBirthday(c.date).nth)}</a>
+  </div>
+  <p class="tiny" style="margin-top:16px">${t.ownerOnly}</p>`;
+  finish();
+}
+
+/* ---------- landing B: gift-card form ---------- */
+function renderLandingB(){
+  const t = T(); draft.campaignId = null; draft.trustPct = 0;
+  if (!CAUSES[draft.cause].region.includes(draft.region)) draft.region = CAUSES[draft.cause].region[0];
+  const preview = { id:"KA-PREVIEW", occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient||"…"}, giver:{name:draft.giver||"…"}, message:draft.message, createdAt:new Date().toISOString().slice(0,10), stamps:[] };
+  app.innerHTML = topBar() + `
+  <section class="b-hero"><h1>${t.bH}</h1><p>${t.bP}</p></section>
+  <div class="b-grid">
+    <div class="b-form">
+      <div class="b-sentence"><span>${t.bFrom}</span><span class="blank">${esc(draft.giver)||"&nbsp;"}</span><span>${t.bTo}</span><span class="blank">${esc(draft.recipient)||"&nbsp;"}</span><span>${t.bFor}</span><span class="blank">${occName(draft.occasion).toLowerCase()}</span></div>
+      <div class="b-row">
+        <div class="field"><label for="bg">${t.from}</label><input class="input" id="bg" placeholder="${t.yourName}" value="${esc(draft.giver)}"></div>
+        <div class="field"><label for="br">${t.recipName}</label><input class="input" id="br" placeholder="Thomas" value="${esc(draft.recipient)}"></div>
+      </div>
+      <div class="b-row three">
+        <div class="field"><label for="bo">${t.bOccasion}</label><select class="input" id="bo">${Object.keys(PHOTOS).map(k=>`<option value="${k}" ${k===draft.occasion?"selected":""}>${occName(k)}</option>`).join("")}</select></div>
+        <div class="field"><label for="bc">${t.bCause}</label><select class="input" id="bc">${Object.keys(CAUSES).map(k=>`<option value="${k}" ${k===draft.cause?"selected":""}>${causeName(k)}</option>`).join("")}</select></div>
+        <div class="field"><label for="bre">${t.where}</label><select class="input" id="bre">${CAUSES[draft.cause].region.map(r=>`<option ${r===draft.region?"selected":""}>${r}</option>`).join("")}</select></div>
+      </div>
+      <div class="field"><label>${t.bAmount}</label><div class="amount"><b id="bamt">${rp(draft.amount)}</b><span class="small muted">~${Math.floor(draft.amount*NET_YIELD/CAUSES[draft.cause].cost)} ${causeUnit(draft.cause)}/${t.perYearShort}</span></div><input type="range" id="bam" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}"></div>
+      <div class="field"><label for="bm">${t.bMsg}</label><textarea class="input" id="bm" placeholder="${t.msgPh}">${esc(draft.message)}</textarea></div>
+      <button class="btn wide" id="bsend">${t.bSend} →</button>
+      <p class="tiny" style="text-align:center;margin-top:10px">${t.bFoot}</p>
+    </div>
+    <div class="b-card"><p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>${posterHTML(preview)}</div>
+  </div>
+  <p class="ab">${t.abTry} <a href="#/">${t.abA}</a></p>`;
+  const sync = () => renderLandingB();
+  q("#bg").oninput = e => { draft.giver = e.target.value; liveB(); }; q("#br").oninput = e => { draft.recipient = e.target.value; liveB(); };
+  q("#bo").onchange = e => { draft.occasion = e.target.value; sync(); }; q("#bc").onchange = e => { draft.cause = e.target.value; draft.region = CAUSES[draft.cause].region[0]; sync(); };
+  q("#bre").onchange = e => { draft.region = e.target.value; liveB(); }; q("#bam").oninput = e => { draft.amount = +e.target.value; q("#bamt").textContent = rp(draft.amount); liveB(); };
+  q("#bm").oninput = e => { draft.message = e.target.value; };
+  q("#bsend").onclick = openPay;
+  drawQR(preview); finish();
+}
+function liveB(){
+  const t = T(); const bl = document.querySelectorAll(".b-sentence .blank"); if (bl.length===3){ bl[0].innerHTML = esc(draft.giver)||"&nbsp;"; bl[1].innerHTML = esc(draft.recipient)||"&nbsp;"; }
+  const card = q(".b-card"); if (card){ const preview = { id:"KA-PREVIEW", occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient||"…"}, giver:{name:draft.giver||"…"}, message:draft.message, createdAt:new Date().toISOString().slice(0,10), stamps:[] }; card.innerHTML = `<p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>` + posterHTML(preview); drawQR(preview); }
+  const s = q("#bamt"); if (s) s.nextElementSibling.textContent = `~${Math.floor(draft.amount*NET_YIELD/CAUSES[draft.cause].cost)} ${causeUnit(draft.cause)}/${t.perYearShort}`;
 }
 
 function toast(msg){ const el = document.getElementById("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove("show"), 2600); }

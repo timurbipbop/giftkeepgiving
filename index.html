@@ -199,6 +199,37 @@ input[type=range]{ width:100%; accent-color:var(--moss); }
 .b-card .poster{ box-shadow:0 30px 60px -30px rgba(23,48,31,.6); }
 .b-foot{ text-align:center; font-size:12.5px; color:var(--muted); margin-top:26px; }
 .ab{ text-align:center; margin-top:28px; font-size:12px; color:var(--muted); } .ab a{ color:var(--muted); }
+.top .right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+.btn.sm{ padding:8px 14px; font-size:13px; }
+.me{ display:flex; align-items:center; gap:8px; font-size:13px; }
+.me .avatar{ width:30px; height:30px; font-size:13px; }
+.kb{ display:inline-flex; align-items:center; gap:6px; font-weight:700; letter-spacing:-.02em; }
+.kb i{ width:16px; height:16px; border-radius:4px; background:#2B7CE9; display:inline-block; }
+.home-sec{ margin-top:56px; } .home-sec h2{ text-align:center; margin-bottom:8px; } .home-sec .lead{ text-align:center; color:var(--muted); max-width:52ch; margin:0 auto 22px; }
+.testi{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media (max-width:820px){ .testi{ grid-template-columns:1fr; } }
+.chat{ background:#EFE7DD; border-radius:18px; padding:16px 14px; display:flex; flex-direction:column; gap:8px; }
+.bub{ max-width:88%; padding:9px 12px; border-radius:12px; font-size:13.5px; line-height:1.4; color:#111; position:relative; }
+.bub.in{ background:#fff; align-self:flex-start; border-bottom-left-radius:3px; } .bub.out{ background:#DCF8C6; align-self:flex-end; border-bottom-right-radius:3px; }
+.bub .t{ display:block; text-align:right; font-size:10px; color:#667; margin-top:3px; }
+.bub .card{ background:#1C3A28; color:#F2F4EC; border-radius:10px; padding:10px; font-size:12px; margin-bottom:6px; }
+.bub .card b{ font-family:"Fraunces",serif; font-weight:400; font-size:15px; display:block; }
+.chat .who{ font-size:11.5px; color:#5B6B5E; margin-bottom:2px; }
+.start-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
+@media (max-width:820px){ .start-grid{ grid-template-columns:1fr; } }
+.start-card{ border:1.5px solid var(--line); border-radius:22px; padding:22px; background:var(--card); display:flex; flex-direction:column; gap:10px; }
+.start-card h3{ font-size:24px; }
+.faq{ max-width:720px; margin-left:auto; margin-right:auto; }
+.faq details{ border-bottom:1px solid var(--line); padding:14px 0; }
+.faq summary{ cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; gap:12px; }
+.faq summary::after{ content:"+"; color:var(--muted); font-weight:400; } .faq details[open] summary::after{ content:"–"; }
+.faq p{ margin:10px 0 0; color:var(--muted); font-size:14.5px; line-height:1.55; }
+.foot{ text-align:center; margin-top:48px; padding-top:18px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted); }
+.foot a{ color:var(--muted); }
+.home-grove{ margin-top:14px; }
+.rec{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-top:6px; }
+.rec .dot{ width:8px; height:8px; border-radius:50%; background:#2B7CE9; flex:none; }
+@media (prefers-reduced-motion:no-preference){ .grove svg.on{ animation:pop .35s ease both; animation-delay:calc(var(--i,0) * 10ms); } @keyframes pop{ from{ transform:scale(.4); opacity:0 } to{ transform:scale(1); opacity:1 } } }
 </style>
 </head>
 <body style="background:#17301F;color:#EEF2E8">
@@ -224,6 +255,12 @@ const PHOTOS = {
   mengenang: { url:"https://images.unsplash.com/photo-1643482013409-a371987f9fbd?w=1200&q=70&auto=format&fit=crop", credit:"Keith Misner / Unsplash" },
 };
 
+const THEMES = {
+  nikah:     { bg:"#3A2647", line:"#6B4C86", seal:"#E8C46A" },
+  lahir:     { bg:"#1E4A57", line:"#3E7C8C", seal:"#F1B94B" },
+  ultah:     { bg:"#7A2E2E", line:"#B25A4A", seal:"#F4C04E" },
+  mengenang: { bg:"#1C3A28", line:"#2F5C3F", seal:"#DFA92D" },
+};
 /* ---------- i18n ---------- */
 const L = {
   id: {
@@ -285,6 +322,23 @@ const L = {
     bH:"Kirim hadiah yang terus memberi.", bP:"Seperti mengirim kartu ucapan. Bedanya, hadiahnya tumbuh setiap tahun, selamanya.",
     bFrom:"Dari", bTo:"untuk", bFor:"untuk momen", bSentenceTail:"", bOccasion:"Momen", bCause:"Tanam", bAmount:"Jumlah", bMsg:"Pesan di kartu", bSend:"Kirim hadiah", bPreview:"Pratinjau kartu", bFoot:"Pokok hadiah menjadi wakaf uang abadi yang dikelola nazhir berizin Kitabisa. Penerima mendapat kartu ini via WhatsApp.",
     abA:"Versi A (mobile, cerita)", abB:"Versi B (kartu hadiah)", abTry:"Untuk tim: coba",
+    login:"Masuk dengan Kitabisa", signup:"Buat akun", logout:"Keluar", loginTitle:"Masuk dengan akun Kitabisa", loginHint:"Prototipe: masukkan nama dan nomor WhatsApp yang terdaftar di Kitabisa. Di produksi, ini adalah login Kitabisa yang sebenarnya.", phone:"Nomor WhatsApp", loginBtn:"Masuk", loggedAs:n=>`Masuk sebagai ${n}`,
+    recOnKb:"Tercatat di akun Kitabisa kamu dan akun penerima", recipWaOpt:"WhatsApp penerima (opsional)", recipWaHint:"Kalau nomornya terdaftar di Kitabisa, hadiah ini muncul di akunnya.",
+    hbH:"Kirim hadiah yang terus memberi.", hbP:"Seperti mengirim kartu ucapan lewat WhatsApp. Bedanya, hadiahnya menanam kebaikan setiap tahun, selamanya.",
+    tenYears:"dalam 10 tahun", groveCap:n=>`${n} pohon ditanam atas nama mereka dalam 10 tahun. Pokoknya tetap utuh.`,
+    testiH:"Yang terjadi setelah hadiahnya sampai", testiP:"Kirim hadiah atas nama seseorang sudah dilakukan ribuan pengguna Kitabisa lewat fitur doa. Ini yang biasanya mereka kirim balik.",
+    startH:"Punya momen sendiri?", startP:"Menikah, punya bayi, ulang tahun. Buat halamanmu, bagikan tautannya, dan biarkan tamu menanam alih-alih membawa kado.",
+    startWed:"Halaman pernikahan", startWedP:"Satu tautan untuk undangan. Semua tamu menanam ke satu hutan kecil atas nama kalian.", startBaby:"Halaman kelahiran", startBabyP:"Tumbuh bersama pohon yang ditanam atas namanya. Bagikan lagi setiap ulang tahun.", startBtn:"Buat halaman", seeEx:"Lihat contoh",
+    faqH:"Pertanyaan yang sering diajukan",
+    faq:[
+      ["Apa bedanya dengan donasi biasa?","Donasi biasa dihabiskan sekali. Di sini pokok hadiahmu tidak pernah dipakai. Ia masuk ke dana wakaf abadi, dan hanya hasilnya yang disalurkan setiap tahun atas nama penerima, selamanya."],
+      ["Ke mana uangnya?","Ke dana wakaf uang yang dikelola Kitabisa sebagai nazhir berizin Badan Wakaf Indonesia. Hasilnya disalurkan ke tujuan yang kamu pilih, lewat lembaga mitra yang melaporkan setiap penyaluran dengan bukti."],
+      ["Kenapa tahun pertama sedikit sekali?","Karena hanya hasilnya yang dipakai, sekitar 6% per tahun. Rp 1 juta menanam ~2 pohon setahun. Hadiah biasa menanam 40 pohon sekali lalu berhenti. Kado Abadi melampauinya di tahun ke-17 dan terus tumbuh."],
+      ["Apa yang diterima penerima?","Sertifikat dengan pesanmu dan kode QR, dikirim dari nomor resmi Kitabisa tanpa ajakan apa pun, plus halaman yang menampilkan setiap penyaluran atas namanya. Kalau ia pengguna Kitabisa, hadiah ini muncul di akunnya."],
+      ["Berapa biaya Kitabisa?","Aturan membolehkan nazhir mengambil sampai 10% dari hasil. Kami transparan soal biaya operasional dan berkomitmen menurunkannya saat dana melewati ambang tertentu, supaya lebih banyak sampai ke tujuan."],
+      ["Bisa ditarik kembali?","Tidak. Wakaf adalah pemindahan kepemilikan untuk selamanya. Itulah yang membuat hadiah ini abadi."],
+    ],
+    footNote:"Kado Abadi adalah produk Kitabisa. Prototipe: pembayaran dan pengiriman disimulasikan.", inboxSoon:"Hadiah untukmu (segera)",
     photoCredit:"Foto",
   },
   en: {
@@ -345,6 +399,23 @@ const L = {
     bH:"Send a gift that keeps on giving.", bP:"As easy as a greeting card. Except this one grows every year, forever.",
     bFrom:"From", bTo:"to", bFor:"for their", bSentenceTail:"", bOccasion:"Moment", bCause:"Plant", bAmount:"Amount", bMsg:"Message on the card", bSend:"Send the gift", bPreview:"Card preview", bFoot:"The principal becomes a perpetual endowment managed by Kitabisa's licensed trustee. The recipient gets this card on WhatsApp.",
     abA:"Version A (mobile, story)", abB:"Version B (gift card)", abTry:"For the team: try",
+    login:"Log in with Kitabisa", signup:"Create account", logout:"Log out", loginTitle:"Log in with your Kitabisa account", loginHint:"Prototype: enter the name and WhatsApp number registered on Kitabisa. In production this is the real Kitabisa login.", phone:"WhatsApp number", loginBtn:"Log in", loggedAs:n=>`Logged in as ${n}`,
+    recOnKb:"Recorded on your Kitabisa account and the recipient's", recipWaOpt:"Recipient's WhatsApp (optional)", recipWaHint:"If the number is registered on Kitabisa, the gift appears in their account.",
+    hbH:"Send a gift that keeps on giving.", hbP:"As easy as a greeting card on WhatsApp. Except this one plants kindness every year, forever.",
+    tenYears:"in 10 years", groveCap:n=>`${n} trees planted in their name over 10 years. The principal stays intact.`,
+    testiH:"What happens after the gift arrives", testiP:"Thousands of Kitabisa users already give in someone's name through the prayer feature. This is what usually comes back.",
+    startH:"Have a moment of your own?", startP:"A wedding, a baby, a birthday. Start your page, share the link, and let guests plant instead of bringing presents.",
+    startWed:"Wedding page", startWedP:"One link for the invitation. Every guest plants into one small forest in your names.", startBaby:"Newborn page", startBabyP:"They grow up alongside trees planted in their name. Share it again every birthday.", startBtn:"Start a page", seeEx:"See an example",
+    faqH:"Frequently asked questions",
+    faq:[
+      ["How is this different from a donation?","A donation is spent once. Here the principal is never spent. It enters a perpetual endowment (waqf), and only the yield is delivered every year in the recipient's name, forever."],
+      ["Where does the money go?","Into a cash waqf fund managed by Kitabisa, a trustee licensed by the Indonesian Waqf Board. The yield goes to the cause you chose, through partner organizations that report every delivery with proof."],
+      ["Why is year one so small?","Because only the yield is used, about 6% a year. Rp 1 million plants ~2 trees a year. A one-time gift plants 40 trees once and stops. Kado Abadi passes it in year 17 and keeps growing."],
+      ["What does the recipient get?","A certificate with your message and a QR code, sent from Kitabisa's official number with no ask attached, plus a page showing every delivery in their name. If they use Kitabisa, the gift appears in their account."],
+      ["What does Kitabisa charge?","The rules allow the trustee up to 10% of the yield. We are transparent about operating cost and commit to lowering the fee as the fund passes certain thresholds, so more reaches the causes."],
+      ["Can it be withdrawn?","No. Waqf is a permanent transfer of ownership. That is what makes the gift eternal."],
+    ],
+    footNote:"Kado Abadi is a Kitabisa product. Prototype: payment and delivery are simulated.", inboxSoon:"Gifts for you (soon)",
     photoCredit:"Photo",
   }
 };
@@ -391,6 +462,8 @@ function persist(){
   try { const g={}; for (const k in gifts) if (!DEMO_GIFTS.find(d=>d.id===k)) g[k]=gifts[k]; localStorage.setItem("ka.gifts", JSON.stringify(g)); } catch(e){}
   try { const c={}; for (const k in campaigns) if (!DEMO_CAMPAIGNS[k]) c[k]=campaigns[k]; localStorage.setItem("ka.campaigns", JSON.stringify(c)); } catch(e){}
 }
+let me = null; try { me = JSON.parse(localStorage.getItem("ka.me")||"null"); } catch(e){}
+function setMe(u){ me = u; try { u ? localStorage.setItem("ka.me", JSON.stringify(u)) : localStorage.removeItem("ka.me"); } catch(e){} render(); }
 const draft = { occasion:"lahir", cause:"pohon", region:"Jawa Barat", amount:1000000, years:10, recipient:"", wa:"", giver:"", message:"", campaignId:null, trustPct:0 };
 const cdraft = { occasion:"nikah", title:"", host:"", wa:"", date:"", story:"", cause:"pohon", region:"Jawa Barat", photo:null, trust:true };
 const campaignGifts = id => Object.values(gifts).filter(g => g.campaignId === id).sort((a,b)=>a.createdAt<b.createdAt?1:-1);
@@ -409,21 +482,38 @@ function go(h){ location.hash = h; }
 function render(){
   const { p, id, params } = route();
   document.documentElement.lang = lang;
+  if (p === "" || p === "b") return renderHome();
+  if (p === "a") return renderLanding();
   if (p === "create") return renderCreate(params.get("c"));
   if (p === "start") return renderStart();
-  if (p === "b") return renderLandingB();
   if (p === "owner" && campaigns[id]) return renderOwner(campaigns[id]);
   if (p === "c" && campaigns[id]) return renderCampaign(campaigns[id]);
   if (p === "gift" && gifts[id]) return renderGift(gifts[id]);
   if (p === "poster" && gifts[id]) return renderPoster(gifts[id]);
-  renderLanding();
+  renderHome();
 }
 function setLang(l){ lang = l; try { localStorage.setItem("ka.lang", l); } catch(e){} render(); }
 function topBar(){
-  return `<div class="top"><a class="brand" href="#/"><svg viewBox="0 0 24 24"><use href="#i-seed"/></svg>Kado Abadi <span class="tiny" style="margin-left:2px">${T().tagline}</span></a>
-  <div class="lang" role="group"><button data-l="id" aria-pressed="${lang==="id"}">ID</button><button data-l="en" aria-pressed="${lang==="en"}">EN</button></div></div>`;
+  const t = T();
+  const auth = me ? `<span class="me"><span class="avatar">${initial(me.name)}</span><span>${esc(me.name)}</span><button class="btn quiet sm" id="logout">${t.logout}</button></span>`
+                  : `<button class="btn sm" id="login"><span class="kb"><i></i>Kitabisa</span>&nbsp;· ${t.login}</button><button class="btn quiet sm" id="signup">${t.signup}</button>`;
+  return `<div class="top"><a class="brand" href="#/"><svg viewBox="0 0 24 24"><use href="#i-seed"/></svg>Kado Abadi <span class="tiny" style="margin-left:2px">${t.tagline}</span></a>
+  <div class="right">${auth}<div class="lang" role="group"><button data-l="id" aria-pressed="${lang==="id"}">ID</button><button data-l="en" aria-pressed="${lang==="en"}">EN</button></div></div></div>`;
 }
-function finish(){ document.querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.l)); app.classList.toggle("wide", route().p==="b"); window.scrollTo(0,0); }
+function openLogin(){
+  const t = T(), m = document.getElementById("modal");
+  m.innerHTML = `<div class="sheet"><h3>${t.loginTitle}</h3><p class="tiny">${t.loginHint}</p>
+    <div class="field"><label for="ln">${t.yourName}</label><input class="input" id="ln"></div>
+    <div class="field"><label for="lp">${t.phone}</label><input class="input" id="lp" inputmode="tel" placeholder="+62 812 …"></div>
+    <button class="btn wide" id="lgo">${t.loginBtn}</button><div style="height:10px"></div><button class="btn quiet wide" id="lcancel">${t.back}</button></div>`;
+  m.classList.add("open"); q("#lcancel").onclick = () => m.classList.remove("open");
+  q("#lgo").onclick = () => { const n = q("#ln").value.trim(); if (!n) { q("#ln").focus(); return; } m.classList.remove("open"); draft.giver = n; setMe({ name:n, wa:q("#lp").value.trim() }); toast(t.loggedAs(n)); };
+}
+function finish(){
+  document.querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.l));
+  const li = q("#login"), su = q("#signup"), lo = q("#logout"); if (li) li.onclick = openLogin; if (su) su.onclick = openLogin; if (lo) lo.onclick = () => setMe(null);
+  const p = route().p; app.classList.toggle("wide", p==="" || p==="b"); window.scrollTo(0,0);
+}
 function q(s){ return document.querySelector(s); }
 function esc(s){ return String(s||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 function initial(s){ return (s||"?").trim()[0].toUpperCase(); }
@@ -442,7 +532,7 @@ function renderLanding(){
       return `<a class="featcard" href="#/c/${c.id}"><img src="${campaignPhoto(c)}" alt="" loading="lazy"><div class="shade"></div><div class="t"><b>${esc(c.title)}</b><span>${occName(c.occasion)} · ${t.featLine(gs.length, per, causeUnit(c.cause))}</span></div></a>`; }).join("")}
   </section>
   <section class="how"><h3>${t.howH}</h3><ol><li>${t.how1}</li><li>${t.how2}</li><li>${t.how3}</li></ol></section>
-  <p class="ab">${t.abTry} <a href="#/b">${t.abB}</a></p>`;
+  <p class="ab">${t.abTry} <a href="#/">${t.abB}</a></p>`;
   app.querySelectorAll("[data-occ]").forEach(b => b.onclick = () => { draft.occasion = b.dataset.occ; draft.campaignId = null; go("/create"); });
   finish();
 }
@@ -450,7 +540,7 @@ function renderLanding(){
 /* ---------- calculator ---------- */
 function grove(eternal, oneTime, icon){
   const cap = 150; const n = Math.min(Math.max(eternal, oneTime), cap); let out = "";
-  for (let i=0;i<n;i++) out += `<svg class="${i < eternal ? "on" : "ghost"}" viewBox="0 0 24 24"><use href="#${icon}"/></svg>`;
+  for (let i=0;i<n;i++) out += `<svg class="${i < eternal ? "on" : "ghost"}" style="--i:${i}" viewBox="0 0 24 24"><use href="#${icon}"/></svg>`;
   const extra = Math.max(eternal, oneTime) - cap;
   return `<div class="grove">${out}</div>` + (extra > 0 ? `<p class="tiny">+${nf(extra)}</p>` : "");
 }
@@ -627,14 +717,20 @@ function posterHTML(g){
   const t = T(), c = CAUSES[g.cause], unit = causeUnit(g.cause); const perYear = causePart(g)*NET_YIELD/c.cost;
   const yearly = perYear >= 1 ? t.yearly(Math.floor(perYear), unit) : t.per10(Math.max(1,Math.round(perYear*10)), unit);
   const photo = photos[g.id];
-  return `<div class="poster" id="poster-${g.id}">
-    <svg class="bg" viewBox="0 0 1080 1350" preserveAspectRatio="none" aria-hidden="true"><rect width="1080" height="1350" fill="#1C3A28"/><g fill="none" stroke="#2F5C3F" stroke-width="2" opacity=".55">${[...Array(9)].map((_,i)=>`<path d="M${-100+i*160} 1350 C ${i*160} 900, ${140+i*160} 700, ${60+i*160} 300"/>`).join("")}</g></svg>
+  const th = THEMES[g.occasion] || THEMES.mengenang;
+  const motif = g.occasion==="nikah" ? `<g fill="none" stroke="${th.line}" stroke-width="3" opacity=".5"><circle cx="330" cy="1120" r="90"/><circle cx="430" cy="1120" r="90"/><circle cx="760" cy="230" r="60"/><circle cx="830" cy="230" r="60"/></g>`
+    : g.occasion==="ultah" ? `<g fill="${th.line}" opacity=".55">${[...Array(28)].map((_,i)=>`<circle cx="${(i*197)%1080}" cy="${(i*331)%1350}" r="${6+(i%4)*4}"/>`).join("")}</g>`
+    : g.occasion==="lahir" ? `<g fill="none" stroke="${th.line}" stroke-width="2" opacity=".5">${[...Array(7)].map((_,i)=>`<path d="M${40+i*160} 1350 q 60 -140 0 -280 q -60 -140 0 -280"/>`).join("")}</g>`
+    : `<g fill="none" stroke="${th.line}" stroke-width="2" opacity=".55">${[...Array(9)].map((_,i)=>`<path d="M${-100+i*160} 1350 C ${i*160} 900, ${140+i*160} 700, ${60+i*160} 300"/>`).join("")}</g>`;
+  return `<div class="poster" id="poster-${g.id}" style="background:${th.bg}">
+    <svg class="bg" viewBox="0 0 1080 1350" preserveAspectRatio="none" aria-hidden="true"><rect width="1080" height="1350" fill="${th.bg}"/>${motif}</svg>
     <div class="frame"></div>
     <div class="content"><div class="kicker">${occKick(g.occasion)}</div><div class="name">${esc(g.recipient.name)}</div>
-      <div class="arch">${photo?`<img src="${photo}" alt="">`:esc(initial(g.recipient.name))}</div>
+      <div class="arch" style="background:${th.seal}">${photo?`<img src="${photo}" alt="">`:esc(initial(g.recipient.name))}</div>
       <div class="line">${t.posterLine(yearly, esc(g.region), esc(g.recipient.name))}${trustPart(g)>0?`<div style="font-size:3cqw;opacity:.8;margin-top:2%">${t.posterPlus}</div>`:""}</div>
+      ${g.message ? `<div style="font-size:3.6cqw;line-height:1.35;opacity:.92;margin-top:5%;max-width:84%">“${esc(g.message)}”</div>` : ""}
       <div class="from">${t.posterFrom(esc(g.giver.name), fmtDate(g.createdAt))}</div></div>
-    <div class="footer"><div class="seal">Kado Abadi<small>${t.sealSub}</small></div><div class="qr" id="qr-${g.id}"></div></div>
+    <div class="footer"><div class="seal" style="background:${th.seal};box-shadow:0 0 0 .8cqw ${th.bg},0 0 0 1cqw ${th.seal}">Kado Abadi<small>${t.sealSub}</small></div><div class="qr" id="qr-${g.id}"></div></div>
     <div class="fid">giftkeepgiving.com &nbsp;·&nbsp; ${g.id}</div></div>`;
 }
 function drawQR(g){
@@ -722,45 +818,84 @@ function renderOwner(c){
   finish();
 }
 
-/* ---------- landing B: gift-card form ---------- */
-function renderLandingB(){
+/* ---------- home: gift-card first ---------- */
+function previewGift(){ return { id:"KA-PREVIEW", occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient||"…"}, giver:{name:draft.giver||"…"}, message:draft.message, createdAt:new Date().toISOString().slice(0,10), stamps:[] }; }
+function renderHome(){
   const t = T(); draft.campaignId = null; draft.trustPct = 0;
+  if (me && !draft.giver) draft.giver = me.name;
   if (!CAUSES[draft.cause].region.includes(draft.region)) draft.region = CAUSES[draft.cause].region[0];
-  const preview = { id:"KA-PREVIEW", occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient||"…"}, giver:{name:draft.giver||"…"}, message:draft.message, createdAt:new Date().toISOString().slice(0,10), stamps:[] };
+  const c = CAUSES[draft.cause]; const feats = Object.values(campaigns).slice(0,2);
+  const TESTI = lang==="id" ? [
+    { who:"Rani → Mbak Dita", msgs:[["card","Kado Abadi untuk Arka","2 pohon setiap tahun, Jawa Barat"],["out","Selamat ya, Dit! Buat Arka, biar tumbuhnya bareng pohon 🌱","09.12"],["in","Ya Allah Ran… aku sampe nangis. Ini kado paling thoughtful yang pernah kami terima 😭","09.40"],["in","Nanti kalau Arka udah gede aku ajak liat pohonnya","09.41"]] },
+    { who:"Tim Kantor → Pak Hendra", msgs:[["card","Kado Abadi untuk Bapak Hendra","Bulan sekolah, NTT, selamanya"],["out","Selamat purna tugas, Pak. Dari kami semua di Divisi Ops.","17.03"],["in","Terima kasih, anak-anak. Saya kira pensiun itu berhenti. Ternyata masih ada yang jalan terus atas nama saya.","19.20"]] },
+    { who:"Nadia → Aisyah & Rafi", msgs:[["card","Kado Abadi untuk Aisyah & Rafi","Ikut menanam · hutan kecil di Jawa Barat"],["out","Barakallah! Aku ikut nanam di halaman kalian ya ❤️","20.15"],["in","NADIAAA 😭 kamu tau aja. Ini lebih dari kado apa pun. Makasih udah ikut nanem sama kita","20.31"]] },
+  ] : [
+    { who:"Rani → Dita", msgs:[["card","Kado Abadi for Arka","2 trees every year, West Java"],["out","Congrats, Dit! For Arka, so he grows up with the trees 🌱","09:12"],["in","Ran… I actually cried. This is the most thoughtful gift we've ever received 😭","09:40"],["in","When Arka is older I'll take him to see the trees","09:41"]] },
+    { who:"Ops team → Pak Hendra", msgs:[["card","Kado Abadi for Pak Hendra","Months of school, NTT, forever"],["out","Happy retirement, Pak. From all of us in Ops.","17:03"],["in","Thank you all. I thought retiring meant stopping. Turns out something keeps going in my name.","19:20"]] },
+    { who:"Nadia → Aisyah & Rafi", msgs:[["card","Kado Abadi for Aisyah & Rafi","Planted alongside · a small forest in West Java"],["out","Barakallah! I planted into your page ❤️","20:15"],["in","NADIAAA 😭 you always know. This means more than any present. Thank you for planting with us","20:31"]] },
+  ];
   app.innerHTML = topBar() + `
-  <section class="b-hero"><h1>${t.bH}</h1><p>${t.bP}</p></section>
+  <section class="b-hero"><h1>${t.hbH}</h1><p>${t.hbP}</p></section>
   <div class="b-grid">
     <div class="b-form">
       <div class="b-sentence"><span>${t.bFrom}</span><span class="blank">${esc(draft.giver)||"&nbsp;"}</span><span>${t.bTo}</span><span class="blank">${esc(draft.recipient)||"&nbsp;"}</span><span>${t.bFor}</span><span class="blank">${occName(draft.occasion).toLowerCase()}</span></div>
       <div class="b-row">
-        <div class="field"><label for="bg">${t.from}</label><input class="input" id="bg" placeholder="${t.yourName}" value="${esc(draft.giver)}"></div>
+        <div class="field"><label for="bg">${t.from}</label><input class="input" id="bg" placeholder="${t.yourName}" value="${esc(draft.giver)}">${me?`<div class="rec"><span class="dot"></span>${t.loggedAs(esc(me.name))}</div>`:""}</div>
         <div class="field"><label for="br">${t.recipName}</label><input class="input" id="br" placeholder="Thomas" value="${esc(draft.recipient)}"></div>
       </div>
-      <div class="b-row three">
+      <div class="b-row">
         <div class="field"><label for="bo">${t.bOccasion}</label><select class="input" id="bo">${Object.keys(PHOTOS).map(k=>`<option value="${k}" ${k===draft.occasion?"selected":""}>${occName(k)}</option>`).join("")}</select></div>
-        <div class="field"><label for="bc">${t.bCause}</label><select class="input" id="bc">${Object.keys(CAUSES).map(k=>`<option value="${k}" ${k===draft.cause?"selected":""}>${causeName(k)}</option>`).join("")}</select></div>
-        <div class="field"><label for="bre">${t.where}</label><select class="input" id="bre">${CAUSES[draft.cause].region.map(r=>`<option ${r===draft.region?"selected":""}>${r}</option>`).join("")}</select></div>
+        <div class="field"><label for="bw">${t.recipWaOpt}</label><input class="input" id="bw" inputmode="tel" placeholder="+62 812 …" value="${esc(draft.wa)}"><div class="hint">${t.recipWaHint}</div></div>
       </div>
-      <div class="field"><label>${t.bAmount}</label><div class="amount"><b id="bamt">${rp(draft.amount)}</b><span class="small muted">~${Math.floor(draft.amount*NET_YIELD/CAUSES[draft.cause].cost)} ${causeUnit(draft.cause)}/${t.perYearShort}</span></div><input type="range" id="bam" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}"></div>
+      <div class="b-row">
+        <div class="field"><label for="bc">${t.bCause}</label><select class="input" id="bc">${Object.keys(CAUSES).map(k=>`<option value="${k}" ${k===draft.cause?"selected":""}>${causeName(k)}</option>`).join("")}</select></div>
+        <div class="field"><label for="bre">${t.where}</label><select class="input" id="bre">${c.region.map(r=>`<option ${r===draft.region?"selected":""}>${r}</option>`).join("")}</select></div>
+      </div>
+      <div class="field"><label>${t.bAmount}</label><div class="amount"><b id="bamt">${rp(draft.amount)}</b><span class="small muted" id="bper">${nf(calc.units(draft.amount,c.cost,10))} ${causeUnit(draft.cause)} ${t.tenYears}</span></div><input type="range" id="bam" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}">
+        <div class="home-grove" id="hgrove">${grove(calc.units(draft.amount,c.cost,10), calc.oneTime(draft.amount,c.cost), c.icon)}</div>
+        <p class="tiny" id="hcap">${t.groveCap(nf(calc.units(draft.amount,c.cost,10)))} ${t.legendB}: ${calc.oneTime(draft.amount,c.cost)}.</p></div>
       <div class="field"><label for="bm">${t.bMsg}</label><textarea class="input" id="bm" placeholder="${t.msgPh}">${esc(draft.message)}</textarea></div>
       <button class="btn wide" id="bsend">${t.bSend} →</button>
-      <p class="tiny" style="text-align:center;margin-top:10px">${t.bFoot}</p>
+      <div class="rec" style="justify-content:center"><span class="dot"></span>${t.recOnKb}</div>
+      <p class="tiny" style="text-align:center;margin-top:8px">${t.bFoot}</p>
     </div>
-    <div class="b-card"><p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>${posterHTML(preview)}</div>
+    <div class="b-card"><p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>${posterHTML(previewGift())}</div>
   </div>
-  <p class="ab">${t.abTry} <a href="#/">${t.abA}</a></p>`;
-  const sync = () => renderLandingB();
+
+  <section class="home-sec"><h2>${t.testiH}</h2><p class="lead">${t.testiP}</p>
+    <div class="testi">${TESTI.map(ch => `<div class="chat"><div class="who">${esc(ch.who)}</div>${ch.msgs.map(m => m[0]==="card"
+      ? `<div class="bub out"><div class="card"><b>${esc(m[1])}</b>${esc(m[2])}</div><span class="t">Kitabisa</span></div>`
+      : `<div class="bub ${m[0]}">${esc(m[1])}<span class="t">${m[2]}</span></div>`).join("")}</div>`).join("")}</div>
+  </section>
+
+  <section class="home-sec"><h2>${t.startH}</h2><p class="lead">${t.startP}</p>
+    <div class="start-grid">
+      <div class="start-card"><h3>${t.startWed}</h3><p class="muted">${t.startWedP}</p><div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="#/start">${t.startBtn}</a><a class="btn quiet" href="#/c/KP-AISYAH-RAFI">${t.seeEx}</a></div></div>
+      <div class="start-card"><h3>${t.startBaby}</h3><p class="muted">${t.startBabyP}</p><div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="#/start">${t.startBtn}</a><a class="btn quiet" href="#/c/KP-THOMAS">${t.seeEx}</a></div></div>
+    </div>
+    <div class="start-grid" style="margin-top:16px">${feats.map(cp => { const gs = campaignGifts(cp.id); const tot = gs.reduce((s,g)=>s+causePart(g),0); const per = Math.floor(tot*NET_YIELD/CAUSES[cp.cause].cost);
+      return `<a class="featcard" href="#/c/${cp.id}" style="margin:0"><img src="${campaignPhoto(cp)}" alt="" loading="lazy"><div class="shade"></div><div class="t"><b>${esc(cp.title)}</b><span>${occName(cp.occasion)} · ${t.featLine(gs.length, per, causeUnit(cp.cause))}</span></div></a>`; }).join("")}</div>
+  </section>
+
+  <section class="home-sec faq"><h2>${t.faqH}</h2><div style="height:8px"></div>
+    ${t.faq.map(f => `<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join("")}
+  </section>
+  <div class="foot">${t.footNote} · <a href="#/a">${t.abA}</a> · <span>${t.inboxSoon}</span></div>`;
+  const sync = () => renderHome();
   q("#bg").oninput = e => { draft.giver = e.target.value; liveB(); }; q("#br").oninput = e => { draft.recipient = e.target.value; liveB(); };
+  q("#bw").oninput = e => { draft.wa = e.target.value; };
   q("#bo").onchange = e => { draft.occasion = e.target.value; sync(); }; q("#bc").onchange = e => { draft.cause = e.target.value; draft.region = CAUSES[draft.cause].region[0]; sync(); };
   q("#bre").onchange = e => { draft.region = e.target.value; liveB(); }; q("#bam").oninput = e => { draft.amount = +e.target.value; q("#bamt").textContent = rp(draft.amount); liveB(); };
-  q("#bm").oninput = e => { draft.message = e.target.value; };
+  q("#bm").oninput = e => { draft.message = e.target.value; liveB(); };
   q("#bsend").onclick = openPay;
-  drawQR(preview); finish();
+  drawQR(previewGift()); finish();
 }
 function liveB(){
-  const t = T(); const bl = document.querySelectorAll(".b-sentence .blank"); if (bl.length===3){ bl[0].innerHTML = esc(draft.giver)||"&nbsp;"; bl[1].innerHTML = esc(draft.recipient)||"&nbsp;"; }
-  const card = q(".b-card"); if (card){ const preview = { id:"KA-PREVIEW", occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient||"…"}, giver:{name:draft.giver||"…"}, message:draft.message, createdAt:new Date().toISOString().slice(0,10), stamps:[] }; card.innerHTML = `<p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>` + posterHTML(preview); drawQR(preview); }
-  const s = q("#bamt"); if (s) s.nextElementSibling.textContent = `~${Math.floor(draft.amount*NET_YIELD/CAUSES[draft.cause].cost)} ${causeUnit(draft.cause)}/${t.perYearShort}`;
+  const t = T(); const c = CAUSES[draft.cause]; const bl = document.querySelectorAll(".b-sentence .blank"); if (bl.length===3){ bl[0].innerHTML = esc(draft.giver)||"&nbsp;"; bl[1].innerHTML = esc(draft.recipient)||"&nbsp;"; }
+  const card = q(".b-card"); if (card){ const pv = previewGift(); card.innerHTML = `<p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>` + posterHTML(pv); drawQR(pv); }
+  const per = q("#bper"); if (per) per.textContent = `${nf(calc.units(draft.amount,c.cost,10))} ${causeUnit(draft.cause)} ${t.tenYears}`;
+  const hg = q("#hgrove"); if (hg) hg.innerHTML = grove(calc.units(draft.amount,c.cost,10), calc.oneTime(draft.amount,c.cost), c.icon);
+  const hc = q("#hcap"); if (hc) hc.textContent = `${t.groveCap(nf(calc.units(draft.amount,c.cost,10)))} ${t.legendB}: ${calc.oneTime(draft.amount,c.cost)}.`;
 }
 
 function toast(msg){ const el = document.getElementById("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove("show"), 2600); }

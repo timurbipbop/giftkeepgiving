@@ -227,6 +227,27 @@ input[type=range]{ width:100%; accent-color:var(--moss); }
 .foot{ text-align:center; margin-top:48px; padding-top:18px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted); }
 .foot a{ color:var(--muted); }
 .home-grove{ margin-top:14px; }
+.step{ background:var(--card); border:1.5px solid var(--line); border-radius:24px; padding:22px 22px 20px; position:relative; }
+.step.two{ margin-top:14px; }
+.stepno{ position:absolute; top:-12px; left:18px; width:26px; height:26px; border-radius:50%; background:var(--marigold); color:var(--ink); font-weight:700; font-size:13px; display:grid; place-items:center; }
+.sentence{ font-family:"Fraunces",serif; font-size:clamp(24px,2.6vw,32px); line-height:1.6; letter-spacing:-.01em; }
+.inl{ font:inherit; color:var(--fg); background:transparent; border:0; border-bottom:2px solid var(--marigold); padding:0 4px 2px; margin:0 2px; min-width:3ch; max-width:100%; }
+.inl:focus{ outline:none; border-bottom-color:var(--moss); background:var(--mist); border-radius:6px 6px 0 0; }
+select.inl{ appearance:none; -webkit-appearance:none; cursor:pointer; padding-right:22px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232F5C3F' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 2px center; }
+input.inl::placeholder{ color:var(--muted); opacity:.7; }
+.journey{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+@media (max-width:820px){ .journey{ grid-template-columns:1fr; } }
+.jstep{ background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:16px 14px; display:flex; flex-direction:column; gap:6px; }
+.jstep .jn{ width:24px; height:24px; border-radius:50%; background:var(--moss); color:#fff; font-size:12px; font-weight:700; display:grid; place-items:center; }
+.jstep b{ font-family:"Fraunces",serif; font-weight:400; font-size:18px; } .jstep span{ font-size:13px; color:var(--muted); line-height:1.45; }
+.after{ display:grid; grid-template-columns:1.1fr 1fr .9fr; gap:16px; align-items:start; }
+@media (max-width:820px){ .after{ grid-template-columns:1fr; } }
+.mail{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:14px 16px; font-size:13.5px; }
+.mail .mh{ display:flex; gap:8px; align-items:center; font-size:12.5px; margin-bottom:6px; } .mail .mh .dot{ width:10px; height:10px; border-radius:50%; background:#2B7CE9; }
+.mail .ms{ font-weight:600; margin-bottom:6px; } .mail p{ color:var(--muted); font-size:13px; }
+.mail .mbtn{ display:inline-block; background:var(--accent); color:var(--accent-fg); border-radius:999px; padding:8px 14px; font-size:12.5px; font-weight:600; }
+.notif{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:12px 14px; font-size:13px; display:flex; flex-direction:column; gap:4px; }
+.notif .nh{ display:flex; justify-content:space-between; align-items:center; margin-bottom:2px; } .notif span{ color:var(--muted); font-size:12.5px; }
 .rec{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-top:6px; }
 .rec .dot{ width:8px; height:8px; border-radius:50%; background:#2B7CE9; flex:none; }
 @media (prefers-reduced-motion:no-preference){ .grove svg.on{ animation:pop .35s ease both; animation-delay:calc(var(--i,0) * 10ms); } @keyframes pop{ from{ transform:scale(.4); opacity:0 } to{ transform:scale(1); opacity:1 } } }
@@ -322,10 +343,18 @@ const L = {
     bH:"Kirim hadiah yang terus memberi.", bP:"Seperti mengirim kartu ucapan. Bedanya, hadiahnya tumbuh setiap tahun, selamanya.",
     bFrom:"Dari", bTo:"untuk", bFor:"untuk momen", bSentenceTail:"", bOccasion:"Momen", bCause:"Tanam", bAmount:"Jumlah", bMsg:"Pesan di kartu", bSend:"Kirim hadiah", bPreview:"Pratinjau kartu", bFoot:"Pokok hadiah menjadi wakaf uang abadi yang dikelola nazhir berizin Kitabisa. Penerima mendapat kartu ini via WhatsApp.",
     abA:"Versi A (mobile, cerita)", abB:"Versi B (kartu hadiah)", abTry:"Untuk tim: coba",
+    sentence:(g,c,r,o)=>`Aku, ${g}, mau kirim hadiah ${c} untuk ${r} di ${o}.`, theirName:"nama mereka",
+    causeGift:{ pohon:"tanam pohon", makan:"beri makan", sekolah:"bulan sekolah" }, occGift:{ lahir:"kelahirannya", ultah:"ulang tahunnya", nikah:"pernikahannya", mengenang:"kenangannya" },
+    howH:"Perjalanan uangnya", howP:"Dari kamu, ke dana abadi, ke kebaikan yang terus berulang. Ini yang terjadi setelah kamu menekan kirim.",
+    journey:[["Kamu memberi","100% hadiahmu masuk ke dana wakaf uang Kado Abadi. Tidak ada potongan di depan."],["Pokoknya dijaga","Kitabisa, sebagai nazhir berizin Badan Wakaf Indonesia, mengelola pokoknya. Pokok ini tidak pernah dipakai."],["Diinvestasikan","Dana ditempatkan di instrumen syariah yang aman, seperti sukuk wakaf, dengan hasil sekitar 6% per tahun."],["Hasilnya disalurkan","Setiap tahun, hasilnya ke tujuan yang kamu pilih, lewat lembaga mitra yang melapor dengan foto dan lokasi."],["Selamanya","Tahun depan terjadi lagi. Dan tahun setelahnya. Pokoknya masih di sana."]],
+    afterH:"Yang mereka terima setelah kamu membayar", afterP:"Kitabisa mengabari penerima lewat WhatsApp, email, dan aplikasi. Tanpa ajakan apa pun, hanya hadiahnya.",
+    cardFor:n=>`Kado Abadi untuk ${n}`, cardLine:(n,u)=>`${n} ${u} setiap tahun, selamanya`, now:"baru saja",
+    mailSubj:(g,r)=>`${g} mengirimkan hadiah yang terus memberi untuk ${r}`, mailBody:(r,g)=>`Hai ${r}, ${g} baru menanam kebaikan atas namamu. Sertifikatmu terlampir, dan halamanmu akan bertambah setiap tahun.`, mailBtn:"Lihat sertifikat",
+    notifT:g=>`${g} mengirimimu hadiah 🌱`, notifB:r=>`Hadiah untuk ${r} tercatat di akun Kitabisa-mu. Ketuk untuk melihat.`,
     login:"Masuk dengan Kitabisa", signup:"Buat akun", logout:"Keluar", loginTitle:"Masuk dengan akun Kitabisa", loginHint:"Prototipe: masukkan nama dan nomor WhatsApp yang terdaftar di Kitabisa. Di produksi, ini adalah login Kitabisa yang sebenarnya.", phone:"Nomor WhatsApp", loginBtn:"Masuk", loggedAs:n=>`Masuk sebagai ${n}`,
     recOnKb:"Tercatat di akun Kitabisa kamu dan akun penerima", recipWaOpt:"WhatsApp penerima (opsional)", recipWaHint:"Kalau nomornya terdaftar di Kitabisa, hadiah ini muncul di akunnya.",
     hbH:"Kirim hadiah yang terus memberi.", hbP:"Seperti mengirim kartu ucapan lewat WhatsApp. Bedanya, hadiahnya menanam kebaikan setiap tahun, selamanya.",
-    tenYears:"dalam 10 tahun", groveCap:n=>`${n} pohon ditanam atas nama mereka dalam 10 tahun. Pokoknya tetap utuh.`,
+    tenYears:"dalam 10 tahun", groveCap:(n,u)=>`${n} ${u} atas nama mereka dalam 10 tahun. Pokoknya tetap utuh.`,
     testiH:"Yang terjadi setelah hadiahnya sampai", testiP:"Kirim hadiah atas nama seseorang sudah dilakukan ribuan pengguna Kitabisa lewat fitur doa. Ini yang biasanya mereka kirim balik.",
     startH:"Punya momen sendiri?", startP:"Menikah, punya bayi, ulang tahun. Buat halamanmu, bagikan tautannya, dan biarkan tamu menanam alih-alih membawa kado.",
     startWed:"Halaman pernikahan", startWedP:"Satu tautan untuk undangan. Semua tamu menanam ke satu hutan kecil atas nama kalian.", startBaby:"Halaman kelahiran", startBabyP:"Tumbuh bersama pohon yang ditanam atas namanya. Bagikan lagi setiap ulang tahun.", startBtn:"Buat halaman", seeEx:"Lihat contoh",
@@ -335,7 +364,7 @@ const L = {
       ["Ke mana uangnya?","Ke dana wakaf uang yang dikelola Kitabisa sebagai nazhir berizin Badan Wakaf Indonesia. Hasilnya disalurkan ke tujuan yang kamu pilih, lewat lembaga mitra yang melaporkan setiap penyaluran dengan bukti."],
       ["Kenapa tahun pertama sedikit sekali?","Karena hanya hasilnya yang dipakai, sekitar 6% per tahun. Rp 1 juta menanam ~2 pohon setahun. Hadiah biasa menanam 40 pohon sekali lalu berhenti. Kado Abadi melampauinya di tahun ke-17 dan terus tumbuh."],
       ["Apa yang diterima penerima?","Sertifikat dengan pesanmu dan kode QR, dikirim dari nomor resmi Kitabisa tanpa ajakan apa pun, plus halaman yang menampilkan setiap penyaluran atas namanya. Kalau ia pengguna Kitabisa, hadiah ini muncul di akunnya."],
-      ["Berapa biaya Kitabisa?","Aturan membolehkan nazhir mengambil sampai 10% dari hasil. Kami transparan soal biaya operasional dan berkomitmen menurunkannya saat dana melewati ambang tertentu, supaya lebih banyak sampai ke tujuan."],
+      ["Berapa biaya Kitabisa?","Hadiahmu tidak dipotong. 100% masuk ke dana wakaf. Yang kami ambil adalah biaya pengelolaan atas hasilnya, sesuai aturan wakaf, maksimal 10% dari hasil, bukan dari pokok. Ini pengelolaan dana, tapi dengan aturan wakaf dan tujuan yang berbeda: kami bukan manajer investasi, bukan private equity, bukan hedge fund. Kami memaksimalkan dampak, bukan fee. Biaya operasional kami terbuka, dan saat dana melewati ambang tertentu, biayanya kami turunkan supaya lebih banyak sampai ke tujuan."],
       ["Bisa ditarik kembali?","Tidak. Wakaf adalah pemindahan kepemilikan untuk selamanya. Itulah yang membuat hadiah ini abadi."],
     ],
     footNote:"Kado Abadi adalah produk Kitabisa. Prototipe: pembayaran dan pengiriman disimulasikan.", inboxSoon:"Hadiah untukmu (segera)",
@@ -399,10 +428,18 @@ const L = {
     bH:"Send a gift that keeps on giving.", bP:"As easy as a greeting card. Except this one grows every year, forever.",
     bFrom:"From", bTo:"to", bFor:"for their", bSentenceTail:"", bOccasion:"Moment", bCause:"Plant", bAmount:"Amount", bMsg:"Message on the card", bSend:"Send the gift", bPreview:"Card preview", bFoot:"The principal becomes a perpetual endowment managed by Kitabisa's licensed trustee. The recipient gets this card on WhatsApp.",
     abA:"Version A (mobile, story)", abB:"Version B (gift card)", abTry:"For the team: try",
+    sentence:(g,c,r,o)=>`I, ${g}, want to send a gift of ${c} to ${r} for their ${o}.`, theirName:"their name",
+    causeGift:{ pohon:"planting trees", makan:"feeding people", sekolah:"months of school" }, occGift:{ lahir:"newborn", ultah:"birthday", nikah:"wedding", mengenang:"memory" },
+    howH:"Where the money goes", howP:"From you, into a perpetual fund, out to kindness that repeats. This is what happens after you press send.",
+    journey:[["You give","100% of your gift enters the Kado Abadi cash waqf fund. Nothing is deducted up front."],["The principal is held","Kitabisa, a trustee licensed by the Indonesian Waqf Board, manages the principal. It is never spent."],["It is invested","The fund sits in safe sharia instruments, such as waqf sukuk, yielding around 6% a year."],["The yield is delivered","Every year, the yield goes to the cause you chose, through partner organizations that report with photos and locations."],["Forever","Next year it happens again. And the year after. The principal is still there."]],
+    afterH:"What they receive after you pay", afterP:"Kitabisa notifies the recipient on WhatsApp, by email, and in the app. No ask attached, only the gift.",
+    cardFor:n=>`Kado Abadi for ${n}`, cardLine:(n,u)=>`${n} ${u} every year, forever`, now:"just now",
+    mailSubj:(g,r)=>`${g} sent a gift that keeps on giving to ${r}`, mailBody:(r,g)=>`Hi ${r}, ${g} just planted kindness in your name. Your certificate is attached, and your page grows every year.`, mailBtn:"View certificate",
+    notifT:g=>`${g} sent you a gift 🌱`, notifB:r=>`A gift for ${r} is now recorded on your Kitabisa account. Tap to view.`,
     login:"Log in with Kitabisa", signup:"Create account", logout:"Log out", loginTitle:"Log in with your Kitabisa account", loginHint:"Prototype: enter the name and WhatsApp number registered on Kitabisa. In production this is the real Kitabisa login.", phone:"WhatsApp number", loginBtn:"Log in", loggedAs:n=>`Logged in as ${n}`,
     recOnKb:"Recorded on your Kitabisa account and the recipient's", recipWaOpt:"Recipient's WhatsApp (optional)", recipWaHint:"If the number is registered on Kitabisa, the gift appears in their account.",
     hbH:"Send a gift that keeps on giving.", hbP:"As easy as a greeting card on WhatsApp. Except this one plants kindness every year, forever.",
-    tenYears:"in 10 years", groveCap:n=>`${n} trees planted in their name over 10 years. The principal stays intact.`,
+    tenYears:"in 10 years", groveCap:(n,u)=>`${n} ${u} in their name over 10 years. The principal stays intact.`,
     testiH:"What happens after the gift arrives", testiP:"Thousands of Kitabisa users already give in someone's name through the prayer feature. This is what usually comes back.",
     startH:"Have a moment of your own?", startP:"A wedding, a baby, a birthday. Start your page, share the link, and let guests plant instead of bringing presents.",
     startWed:"Wedding page", startWedP:"One link for the invitation. Every guest plants into one small forest in your names.", startBaby:"Newborn page", startBabyP:"They grow up alongside trees planted in their name. Share it again every birthday.", startBtn:"Start a page", seeEx:"See an example",
@@ -412,7 +449,7 @@ const L = {
       ["Where does the money go?","Into a cash waqf fund managed by Kitabisa, a trustee licensed by the Indonesian Waqf Board. The yield goes to the cause you chose, through partner organizations that report every delivery with proof."],
       ["Why is year one so small?","Because only the yield is used, about 6% a year. Rp 1 million plants ~2 trees a year. A one-time gift plants 40 trees once and stops. Kado Abadi passes it in year 17 and keeps growing."],
       ["What does the recipient get?","A certificate with your message and a QR code, sent from Kitabisa's official number with no ask attached, plus a page showing every delivery in their name. If they use Kitabisa, the gift appears in their account."],
-      ["What does Kitabisa charge?","The rules allow the trustee up to 10% of the yield. We are transparent about operating cost and commit to lowering the fee as the fund passes certain thresholds, so more reaches the causes."],
+      ["What does Kitabisa charge?","Nothing is taken from your gift. 100% goes into the waqf fund. What we take is a management fee on the yield, as waqf rules allow, at most 10% of the yield, never of the principal. This is fund management, but under waqf rules and with a different purpose: we are not an investment manager, not private equity, not a hedge fund. We maximize impact, not fees. Our operating cost is published, and as the fund passes certain thresholds we lower the fee so more reaches the causes."],
       ["Can it be withdrawn?","No. Waqf is a permanent transfer of ownership. That is what makes the gift eternal."],
     ],
     footNote:"Kado Abadi is a Kitabisa product. Prototype: payment and delivery are simulated.", inboxSoon:"Gifts for you (soon)",
@@ -818,7 +855,7 @@ function renderOwner(c){
   finish();
 }
 
-/* ---------- home: gift-card first ---------- */
+/* ---------- home: complete the sentence ---------- */
 function previewGift(){ return { id:"KA-PREVIEW", occasion:draft.occasion, cause:draft.cause, region:draft.region, amount:draft.amount, recipient:{name:draft.recipient||"…"}, giver:{name:draft.giver||"…"}, message:draft.message, createdAt:new Date().toISOString().slice(0,10), stamps:[] }; }
 function renderHome(){
   const t = T(); draft.campaignId = null; draft.trustPct = 0;
@@ -834,33 +871,43 @@ function renderHome(){
     { who:"Ops team → Pak Hendra", msgs:[["card","Kado Abadi for Pak Hendra","Months of school, NTT, forever"],["out","Happy retirement, Pak. From all of us in Ops.","17:03"],["in","Thank you all. I thought retiring meant stopping. Turns out something keeps going in my name.","19:20"]] },
     { who:"Nadia → Aisyah & Rafi", msgs:[["card","Kado Abadi for Aisyah & Rafi","Planted alongside · a small forest in West Java"],["out","Barakallah! I planted into your page ❤️","20:15"],["in","NADIAAA 😭 you always know. This means more than any present. Thank you for planting with us","20:31"]] },
   ];
+  const causeSel = `<select class="inl" id="sc">${Object.keys(CAUSES).map(k=>`<option value="${k}" ${k===draft.cause?"selected":""}>${t.causeGift[k]}</option>`).join("")}</select>`;
+  const occSel = `<select class="inl" id="so">${Object.keys(PHOTOS).map(k=>`<option value="${k}" ${k===draft.occasion?"selected":""}>${t.occGift[k]}</option>`).join("")}</select>`;
+  const giverIn = `<input class="inl" id="sg" placeholder="${t.yourName}" value="${esc(draft.giver)}" size="${Math.max(8, (draft.giver||t.yourName).length)}">`;
+  const recipIn = `<input class="inl" id="sr" placeholder="${t.theirName}" value="${esc(draft.recipient)}" size="${Math.max(8, (draft.recipient||t.theirName).length)}">`;
+  const sentence = t.sentence(giverIn, causeSel, recipIn, occSel);
   app.innerHTML = topBar() + `
   <section class="b-hero"><h1>${t.hbH}</h1><p>${t.hbP}</p></section>
   <div class="b-grid">
-    <div class="b-form">
-      <div class="b-sentence"><span>${t.bFrom}</span><span class="blank">${esc(draft.giver)||"&nbsp;"}</span><span>${t.bTo}</span><span class="blank">${esc(draft.recipient)||"&nbsp;"}</span><span>${t.bFor}</span><span class="blank">${occName(draft.occasion).toLowerCase()}</span></div>
-      <div class="b-row">
-        <div class="field"><label for="bg">${t.from}</label><input class="input" id="bg" placeholder="${t.yourName}" value="${esc(draft.giver)}">${me?`<div class="rec"><span class="dot"></span>${t.loggedAs(esc(me.name))}</div>`:""}</div>
-        <div class="field"><label for="br">${t.recipName}</label><input class="input" id="br" placeholder="Thomas" value="${esc(draft.recipient)}"></div>
+    <div>
+      <div class="step"><div class="stepno">1</div><div class="sentence">${sentence}</div>${me?`<div class="rec"><span class="dot"></span>${t.loggedAs(esc(me.name))}</div>`:""}</div>
+      <div class="step two"><div class="stepno">2</div>
+        <div class="field" style="margin-top:0"><div class="amount"><b id="bamt">${rp(draft.amount)}</b><span class="small muted" id="bper">${nf(calc.units(draft.amount,c.cost,10))} ${causeUnit(draft.cause)} ${t.tenYears}</span></div>
+          <input type="range" id="bam" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}" aria-label="${t.bAmount}">
+          <div class="home-grove" id="hgrove">${grove(calc.units(draft.amount,c.cost,10), calc.oneTime(draft.amount,c.cost), c.icon)}</div>
+          <p class="tiny" id="hcap">${t.groveCap(nf(calc.units(draft.amount,c.cost,10)), causeUnit(draft.cause))} ${t.legendB}: ${calc.oneTime(draft.amount,c.cost)}.</p></div>
+        <div class="field"><label for="bm">${t.bMsg}</label><textarea class="input" id="bm" placeholder="${t.msgPh}">${esc(draft.message)}</textarea></div>
+        <div class="b-row">
+          <div class="field"><label for="bre">${t.where}</label><select class="input" id="bre">${c.region.map(r=>`<option ${r===draft.region?"selected":""}>${r}</option>`).join("")}</select></div>
+          <div class="field"><label for="bw">${t.recipWaOpt}</label><input class="input" id="bw" inputmode="tel" placeholder="+62 812 …" value="${esc(draft.wa)}"><div class="hint">${t.recipWaHint}</div></div>
+        </div>
+        <button class="btn wide" id="bsend">${t.bSend} →</button>
+        <div class="rec" style="justify-content:center"><span class="dot"></span>${t.recOnKb}</div>
+        <p class="tiny" style="text-align:center;margin-top:8px">${t.bFoot}</p>
       </div>
-      <div class="b-row">
-        <div class="field"><label for="bo">${t.bOccasion}</label><select class="input" id="bo">${Object.keys(PHOTOS).map(k=>`<option value="${k}" ${k===draft.occasion?"selected":""}>${occName(k)}</option>`).join("")}</select></div>
-        <div class="field"><label for="bw">${t.recipWaOpt}</label><input class="input" id="bw" inputmode="tel" placeholder="+62 812 …" value="${esc(draft.wa)}"><div class="hint">${t.recipWaHint}</div></div>
-      </div>
-      <div class="b-row">
-        <div class="field"><label for="bc">${t.bCause}</label><select class="input" id="bc">${Object.keys(CAUSES).map(k=>`<option value="${k}" ${k===draft.cause?"selected":""}>${causeName(k)}</option>`).join("")}</select></div>
-        <div class="field"><label for="bre">${t.where}</label><select class="input" id="bre">${c.region.map(r=>`<option ${r===draft.region?"selected":""}>${r}</option>`).join("")}</select></div>
-      </div>
-      <div class="field"><label>${t.bAmount}</label><div class="amount"><b id="bamt">${rp(draft.amount)}</b><span class="small muted" id="bper">${nf(calc.units(draft.amount,c.cost,10))} ${causeUnit(draft.cause)} ${t.tenYears}</span></div><input type="range" id="bam" min="${MIN_GIFT}" max="${MAX_GIFT}" step="${STEP}" value="${draft.amount}">
-        <div class="home-grove" id="hgrove">${grove(calc.units(draft.amount,c.cost,10), calc.oneTime(draft.amount,c.cost), c.icon)}</div>
-        <p class="tiny" id="hcap">${t.groveCap(nf(calc.units(draft.amount,c.cost,10)))} ${t.legendB}: ${calc.oneTime(draft.amount,c.cost)}.</p></div>
-      <div class="field"><label for="bm">${t.bMsg}</label><textarea class="input" id="bm" placeholder="${t.msgPh}">${esc(draft.message)}</textarea></div>
-      <button class="btn wide" id="bsend">${t.bSend} →</button>
-      <div class="rec" style="justify-content:center"><span class="dot"></span>${t.recOnKb}</div>
-      <p class="tiny" style="text-align:center;margin-top:8px">${t.bFoot}</p>
     </div>
     <div class="b-card"><p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>${posterHTML(previewGift())}</div>
   </div>
+
+  <section class="home-sec"><h2>${t.howH}</h2><p class="lead">${t.howP}</p>
+    <div class="journey">${t.journey.map((j,i)=>`<div class="jstep"><div class="jn">${i+1}</div><b>${j[0]}</b><span>${j[1]}</span></div>`).join("")}</div>
+    <h3 style="text-align:center;margin-top:36px">${t.afterH}</h3><p class="lead">${t.afterP}</p>
+    <div class="after">
+      <div class="chat"><div class="who">WhatsApp · Kitabisa</div><div class="bub in"><div class="card" style="background:${THEMES[draft.occasion].bg}"><b>${t.cardFor(esc(draft.recipient||t.theirName))}</b>${t.cardLine(Math.max(1,Math.floor(draft.amount*NET_YIELD/c.cost)), causeUnit(draft.cause))}</div>${esc(t.waText(draft.giver||t.yourName, draft.recipient||t.theirName, Math.max(1,Math.floor(draft.amount*NET_YIELD/c.cost)), causeUnit(draft.cause), causeVerb(draft.cause)))} <span style="color:#1F7A4F">giftkeepgiving.com/…</span><span class="t">${t.now}</span></div></div>
+      <div class="mail"><div class="mh"><span class="dot"></span><b>Kitabisa</b><span class="muted">&lt;hadiah@kitabisa.com&gt;</span></div><div class="ms">${t.mailSubj(esc(draft.giver||t.yourName), esc(draft.recipient||t.theirName))}</div><p>${t.mailBody(esc(draft.recipient||t.theirName), esc(draft.giver||t.yourName))}</p><div class="mbtn">${t.mailBtn}</div></div>
+      <div class="notif"><div class="nh"><span class="kb"><i></i>Kitabisa</span><span class="muted tiny">${t.now}</span></div><b>${t.notifT(esc(draft.giver||t.yourName))}</b><span>${t.notifB(esc(draft.recipient||t.theirName))}</span></div>
+    </div>
+  </section>
 
   <section class="home-sec"><h2>${t.testiH}</h2><p class="lead">${t.testiP}</p>
     <div class="testi">${TESTI.map(ch => `<div class="chat"><div class="who">${esc(ch.who)}</div>${ch.msgs.map(m => m[0]==="card"
@@ -881,21 +928,28 @@ function renderHome(){
     ${t.faq.map(f => `<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join("")}
   </section>
   <div class="foot">${t.footNote} · <a href="#/a">${t.abA}</a> · <span>${t.inboxSoon}</span></div>`;
-  const sync = () => renderHome();
-  q("#bg").oninput = e => { draft.giver = e.target.value; liveB(); }; q("#br").oninput = e => { draft.recipient = e.target.value; liveB(); };
-  q("#bw").oninput = e => { draft.wa = e.target.value; };
-  q("#bo").onchange = e => { draft.occasion = e.target.value; sync(); }; q("#bc").onchange = e => { draft.cause = e.target.value; draft.region = CAUSES[draft.cause].region[0]; sync(); };
-  q("#bre").onchange = e => { draft.region = e.target.value; liveB(); }; q("#bam").oninput = e => { draft.amount = +e.target.value; q("#bamt").textContent = rp(draft.amount); liveB(); };
+  q("#sg").oninput = e => { draft.giver = e.target.value; e.target.size = Math.max(8, e.target.value.length||t.yourName.length); liveB(); };
+  q("#sr").oninput = e => { draft.recipient = e.target.value; e.target.size = Math.max(8, e.target.value.length||t.theirName.length); liveB(); };
+  q("#so").onchange = e => { draft.occasion = e.target.value; liveB(); };
+  q("#sc").onchange = e => { draft.cause = e.target.value; draft.region = CAUSES[draft.cause].region[0]; const re = q("#bre"); if (re) re.innerHTML = CAUSES[draft.cause].region.map(r=>`<option>${r}</option>`).join(""); liveB(); };
+  q("#bre").onchange = e => { draft.region = e.target.value; liveB(); };
+  q("#bam").oninput = e => { draft.amount = +e.target.value; q("#bamt").textContent = rp(draft.amount); liveB(); };
   q("#bm").oninput = e => { draft.message = e.target.value; liveB(); };
+  q("#bw").oninput = e => { draft.wa = e.target.value; };
   q("#bsend").onclick = openPay;
   drawQR(previewGift()); finish();
 }
 function liveB(){
-  const t = T(); const c = CAUSES[draft.cause]; const bl = document.querySelectorAll(".b-sentence .blank"); if (bl.length===3){ bl[0].innerHTML = esc(draft.giver)||"&nbsp;"; bl[1].innerHTML = esc(draft.recipient)||"&nbsp;"; }
+  const t = T(); const c = CAUSES[draft.cause];
   const card = q(".b-card"); if (card){ const pv = previewGift(); card.innerHTML = `<p class="small muted" style="margin-bottom:8px">${t.bPreview}</p>` + posterHTML(pv); drawQR(pv); }
   const per = q("#bper"); if (per) per.textContent = `${nf(calc.units(draft.amount,c.cost,10))} ${causeUnit(draft.cause)} ${t.tenYears}`;
   const hg = q("#hgrove"); if (hg) hg.innerHTML = grove(calc.units(draft.amount,c.cost,10), calc.oneTime(draft.amount,c.cost), c.icon);
-  const hc = q("#hcap"); if (hc) hc.textContent = `${t.groveCap(nf(calc.units(draft.amount,c.cost,10)))} ${t.legendB}: ${calc.oneTime(draft.amount,c.cost)}.`;
+  const hc = q("#hcap"); if (hc) hc.textContent = `${t.groveCap(nf(calc.units(draft.amount,c.cost,10)), causeUnit(draft.cause))} ${t.legendB}: ${calc.oneTime(draft.amount,c.cost)}.`;
+  const n = Math.max(1,Math.floor(draft.amount*NET_YIELD/c.cost)), g = esc(draft.giver||t.yourName), r = esc(draft.recipient||t.theirName);
+  const af = q(".after"); if (af) af.innerHTML = `
+      <div class="chat"><div class="who">WhatsApp · Kitabisa</div><div class="bub in"><div class="card" style="background:${THEMES[draft.occasion].bg}"><b>${t.cardFor(r)}</b>${t.cardLine(n, causeUnit(draft.cause))}</div>${esc(t.waText(draft.giver||t.yourName, draft.recipient||t.theirName, n, causeUnit(draft.cause), causeVerb(draft.cause)))} <span style="color:#1F7A4F">giftkeepgiving.com/…</span><span class="t">${t.now}</span></div></div>
+      <div class="mail"><div class="mh"><span class="dot"></span><b>Kitabisa</b><span class="muted">&lt;hadiah@kitabisa.com&gt;</span></div><div class="ms">${t.mailSubj(g, r)}</div><p>${t.mailBody(r, g)}</p><div class="mbtn">${t.mailBtn}</div></div>
+      <div class="notif"><div class="nh"><span class="kb"><i></i>Kitabisa</span><span class="muted tiny">${t.now}</span></div><b>${t.notifT(g)}</b><span>${t.notifB(r)}</span></div>`;
 }
 
 function toast(msg){ const el = document.getElementById("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove("show"), 2600); }
